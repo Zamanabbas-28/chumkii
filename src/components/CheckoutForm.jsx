@@ -127,8 +127,8 @@ export default function CheckoutForm() {
     if (Object.keys(eMap).length) return
 
     setPlacing(true)
-    // Brief polish delay for loading state
-    await new Promise((r) => setTimeout(r, 700))
+    setErrors({})
+    await new Promise((r) => setTimeout(r, 500))
 
     const district = getDistrictById(form.districtId)
     const orderPayload = {
@@ -167,7 +167,6 @@ export default function CheckoutForm() {
       )
       sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(orderPayload))
     } catch {
-      /* ignore storage errors — still navigate with session if possible */
       try {
         sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(orderPayload))
       } catch {
@@ -315,6 +314,14 @@ export default function CheckoutForm() {
         {errors.delivery && (
           <p className="text-sm text-dusty-rose" role="alert">
             {errors.delivery}
+          </p>
+        )}
+        {errors.submit && (
+          <p
+            className="rounded-2xl border border-dusty-rose/40 bg-blush/10 px-4 py-3 text-sm text-dusty-rose"
+            role="alert"
+          >
+            {errors.submit}
           </p>
         )}
 
