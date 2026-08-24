@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { products } from '../data/products'
+import { useProducts } from '../hooks/useProducts'
 import ProductPlaceholder from './ProductPlaceholder'
 
 export default function InspirationGallery() {
+  const { products, loading } = useProducts()
   const [active, setActive] = useState(null)
   const items = products.slice(0, 6)
 
@@ -39,7 +40,14 @@ export default function InspirationGallery() {
         </p>
 
         <div className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
-          {items.map((g, index) => (
+          {loading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="mb-4 aspect-[4/5] w-full break-inside-avoid animate-pulse rounded-2xl bg-cream"
+                />
+              ))
+            : items.map((g, index) => (
             <button
               key={g.id}
               type="button"
@@ -57,7 +65,7 @@ export default function InspirationGallery() {
                 ) : (
                   <ProductPlaceholder
                     name={g.name}
-                    colors={g.colorPalette.map((c) => c.hex)}
+                    colors={(g.colorPalette || []).map((c) => c.hex)}
                   />
                 )}
               </div>

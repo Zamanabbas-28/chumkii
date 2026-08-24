@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { formatBDT } from '../utils/format'
 import { getThreadingById } from '../data/threadingOptions'
 import { SHIPPING } from '../data/shipping'
-import { getDistrictById } from '../data/shippingRates'
 import {
   getCartItemQuantity,
   calculateDeliveryCharge,
-  generateOrderId,
   LAST_ORDER_KEY,
   CHECKOUT_STORAGE_KEY,
 } from '../utils/shipping'
+import { placeOrder, newIdempotencyKey } from '../services/orderService'
 import { useCart } from '../context/CartContext'
 import DistrictSelect from './DistrictSelect'
 import ProductPlaceholder from './ProductPlaceholder'
@@ -50,6 +49,7 @@ export default function CheckoutForm() {
   const navigate = useNavigate()
   const { items, subtotal, clearCart } = useCart()
   const saved = loadCheckoutForm()
+  const idempotencyRef = useRef(null)
 
   const [form, setForm] = useState(
     () =>
@@ -126,57 +126,38 @@ export default function CheckoutForm() {
     setErrors(eMap)
     if (Object.keys(eMap).length) return
 
-    setPlacing(true)
-    setErrors({})
-    await new Promise((r) => setTimeout(r, 500))
-
-    const district = getDistrictById(form.districtId)
-    const orderPayload = {
-      id: generateOrderId(),
-      createdAt: new Date().toISOString(),
-      status: 'order_request',
-      currency: 'BDT',
-      customer: {
-        name: form.name.trim(),
-        whatsapp: form.whatsapp.trim(),
-        email: form.email.trim(),
-      },
-      delivery: {
-        districtId: form.districtId,
-        district: district?.name || '',
-        city: form.city.trim(),
-        address: form.address.trim(),
-        notes: form.notes.trim(),
-      },
-      items: items.map((i) => ({ ...i })),
-      subtotal,
-      deliveryCharge: deliveryInfo.delivery,
-      total: subtotal + deliveryInfo.delivery,
-      meta: {
-        pickup: deliveryInfo.pickup,
-        weightKg: deliveryInfo.weightKg,
-        zone: deliveryInfo.zone,
-      },
+    if (!idempotencyRef.current) {
+      idempotencyRef.current = newIdempotencyKey()
     }
 
-    try {
-      const prev = JSON.parse(localStorage.getItem('chumki-orders-v1') || '[]')
-      localStorage.setItem(
-        'chumki-orders-v1',
-        JSON.stringify([orderPayload, ...prev].slice(0, 30)),
-      )
-      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(orderPayload))
-    } catch {
-      try {
-        sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(orderPayload))
-      } catch {
-        /* ignore */
+    setPlacing(true)
+    setErrors({})
+
+    const result = await placeOrder({
+      form,
+      items,
+      subtotal,
+      deliveryInfo,
+      idempotencyKey: idempotencyRef.current,
+    })
+
+    if (!result.ok) {
+      if (result.idempotencyKey) {
+        idempotencyRef.current = result.idempotencyKey
       }
+      setErrors({
+        submit:
+          result.error ||
+          'We could not place your order. Please try again in a moment.',
+      })
+      setPlacing(false)
+      return
     }
 
     clearCart()
+    idempotencyRef.current = null
     setPlacing(false)
-    navigate('/thank-you')
+    navigate(`/thank-you?ref=${encodeURIComponent(result.orderNumber)}`)
   }
 
   if (!items.length) {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import Navbar from '../components/Navbar'
@@ -41,7 +41,26 @@ function itemLine(i) {
 }
 
 export default function ThankYouPage() {
-  const order = useMemo(() => loadLastOrder(), [])
+  const [params] = useSearchParams()
+  const refParam = params.get('ref')
+
+  const order = useMemo(() => {
+    const stored = loadLastOrder()
+    if (stored) return stored
+    if (refParam) {
+      return {
+        id: refParam,
+        items: [],
+        subtotal: null,
+        deliveryCharge: null,
+        total: null,
+        customer: {},
+        delivery: {},
+        softRefOnly: true,
+      }
+    }
+    return null
+  }, [refParam])
 
   if (!order) {
     return (
@@ -64,26 +83,30 @@ export default function ThankYouPage() {
     )
   }
 
-  const wa = getWhatsAppUrl(
-    buildInquiryMessage({
-      'Order ref': order.id,
-      Name: order.customer?.name,
-      WhatsApp: order.customer?.whatsapp,
-      Email: order.customer?.email || '—',
-      District: order.delivery?.district,
-      Area: order.delivery?.city || '—',
-      Address: order.delivery?.address,
-      Items: (order.items || [])
-        .map(
-          (i) =>
-            `• ${i.name} (${itemLine(i)}) × ${i.quantity} = ${formatBDT(i.price * i.quantity)}`,
-        )
-        .join('\n'),
-      Subtotal: formatBDT(order.subtotal),
-      Delivery: formatBDT(order.deliveryCharge),
-      Total: formatBDT(order.total),
-    }),
-  )
+  const hasDetails = !order.softRefOnly && (order.items || []).length > 0
+
+  const wa = hasDetails
+    ? getWhatsAppUrl(
+        buildInquiryMessage({
+          'Order ref': order.id,
+          Name: order.customer?.name,
+          WhatsApp: order.customer?.whatsapp,
+          Email: order.customer?.email || '—',
+          District: order.delivery?.district,
+          Area: order.delivery?.city || '—',
+          Address: order.delivery?.address,
+          Items: (order.items || [])
+            .map(
+              (i) =>
+                `• ${i.name} (${itemLine(i)}) × ${i.quantity} = ${formatBDT(i.price * i.quantity)}`,
+            )
+            .join('\n'),
+          Subtotal: formatBDT(order.subtotal),
+          Delivery: formatBDT(order.deliveryCharge),
+          Total: formatBDT(order.total),
+        }),
+      )
+    : null
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-ivory text-ink">
@@ -143,47 +166,60 @@ export default function ThankYouPage() {
             you next. It is not a paid checkout yet.
           </p>
 
-          <h2 className="mt-8 font-display text-xl text-ink">Your order</h2>
-          <ul className="mt-4 space-y-3 text-sm">
-            {(order.items || []).map((i) => (
-              <li
-                key={i.key}
-                className="border-b border-border-soft/70 pb-3 last:border-0"
-              >
-                <p className="font-semibold">{i.name}</p>
-                <p className="text-xs text-ink-soft">
-                  {itemLine(i)} · Qty {i.quantity}
-                </p>
-                <p className="mt-1 font-medium">
-                  {formatBDT(i.price * i.quantity)}
-                </p>
-              </li>
-            ))}
-          </ul>
+          {hasDetails ? (
+            <>
+              <h2 className="mt-8 font-display text-xl text-ink">Your order</h2>
+              <ul className="mt-4 space-y-3 text-sm">
+                {(order.items || []).map((i) => (
+                  <li
+                    key={i.key}
+                    className="border-b border-border-soft/70 pb-3 last:border-0"
+                  >
+                    <p className="font-semibold">{i.name}</p>
+                    <p className="text-xs text-ink-soft">
+                      {itemLine(i)} · Qty {i.quantity}
+                    </p>
+                    <p className="mt-1 font-medium">
+                      {formatBDT(i.price * i.quantity)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
 
-          <div className="mt-6 space-y-2 border-t border-border-soft pt-4 text-sm">
-            <div className="flex justify-between text-ink-soft">
-              <span>Subtotal</span>
-              <span className="text-ink">{formatBDT(order.subtotal)}</span>
-            </div>
-            <div className="flex justify-between text-ink-soft">
-              <span>Delivery</span>
-              <span className="text-ink">{formatBDT(order.deliveryCharge)}</span>
-            </div>
-            <div className="flex justify-between border-t border-border-soft pt-3 text-base font-semibold">
-              <span>Total</span>
-              <span>{formatBDT(order.total)}</span>
-            </div>
-          </div>
+              <div className="mt-6 space-y-2 border-t border-border-soft pt-4 text-sm">
+                <div className="flex justify-between text-ink-soft">
+                  <span>Subtotal</span>
+                  <span className="text-ink">{formatBDT(order.subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-ink-soft">
+                  <span>Delivery</span>
+                  <span className="text-ink">{formatBDT(order.deliveryCharge)}</span>
+                </div>
+                <div className="flex justify-between border-t border-border-soft pt-3 text-base font-semibold">
+                  <span>Total</span>
+                  <span>{formatBDT(order.total)}</span>
+                </div>
+              </div>
 
-          <div className="mt-6 rounded-2xl bg-cream/60 px-4 py-3 text-sm text-ink-soft">
-            <p className="font-semibold text-ink">Delivery to</p>
-            <p className="mt-1">
-              {[order.delivery?.address, order.delivery?.city, order.delivery?.district]
-                .filter(Boolean)
-                .join(', ')}
+              <div className="mt-6 rounded-2xl bg-cream/60 px-4 py-3 text-sm text-ink-soft">
+                <p className="font-semibold text-ink">Delivery to</p>
+                <p className="mt-1">
+                  {[
+                    order.delivery?.address,
+                    order.delivery?.city,
+                    order.delivery?.district,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="mt-6 text-sm text-ink-soft">
+              Keep this order number handy. Full item details are shown right
+              after checkout in this browser session.
             </p>
-          </div>
+          )}
         </motion.div>
 
         <motion.div

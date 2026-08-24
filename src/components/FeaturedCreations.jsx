@@ -1,9 +1,20 @@
 import { useMemo, useState } from 'react'
-import { products } from '../data/products'
+import { useProducts } from '../hooks/useProducts'
 import ProductCard from './ProductCard'
 import SearchAndFilters from './SearchAndFilters'
 
+function ProductSkeleton() {
+  return (
+    <div className="animate-pulse space-y-3">
+      <div className="aspect-square rounded-2xl bg-cream" />
+      <div className="h-5 w-2/3 rounded bg-cream" />
+      <div className="h-4 w-1/3 rounded bg-cream" />
+    </div>
+  )
+}
+
 export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
+  const { products, loading } = useProducts()
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState({
     customizableOnly: false,
@@ -36,7 +47,7 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
       })
     }
     return result
-  }, [categoryFilter, query, filters])
+  }, [products, categoryFilter, query, filters])
 
   return (
     <section id="designs" className="bg-ivory px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -77,12 +88,16 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
         )}
 
         <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {list.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))
+            : list.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
         </div>
 
-        {list.length === 0 && (
+        {!loading && list.length === 0 && (
           <p className="mt-8 text-sm text-ink-soft">
             No designs match your search — try clearing filters.
           </p>

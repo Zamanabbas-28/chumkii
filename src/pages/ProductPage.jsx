@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Minus, Plus, ShoppingBag, Check } from 'lucide-react'
-import { getProductById, getRelatedProducts } from '../data/products'
 import { COLORS } from '../data/colors'
 import { calcProductPrice } from '../utils/pricing'
 import { formatBDT } from '../utils/format'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
+import { useProduct } from '../hooks/useProducts'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CartDrawer from '../components/CartDrawer'
@@ -17,9 +17,29 @@ import WishlistButton from '../components/WishlistButton'
 import ProductPlaceholder from '../components/ProductPlaceholder'
 import ColorSelector from '../components/ColorSelector'
 
+function ProductPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-ivory">
+      <Navbar solid />
+      <main className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:px-6 lg:px-8">
+        <div className="h-4 w-16 animate-pulse rounded bg-cream" />
+        <div className="mt-6 grid gap-10 lg:grid-cols-2">
+          <div className="aspect-square animate-pulse rounded-2xl bg-cream" />
+          <div className="space-y-4">
+            <div className="h-10 w-2/3 animate-pulse rounded bg-cream" />
+            <div className="h-4 w-full animate-pulse rounded bg-cream" />
+            <div className="h-4 w-4/5 animate-pulse rounded bg-cream" />
+            <div className="mt-8 h-32 animate-pulse rounded-2xl bg-cream" />
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
 export default function ProductPage() {
   const { id } = useParams()
-  const product = getProductById(id)
+  const { product, related, loading, notFound } = useProduct(id)
   const { addItem } = useCart()
   const { trackView } = useWishlist()
 
@@ -52,8 +72,11 @@ export default function ProductPage() {
     product?.availableColors?.includes(c.id),
   )
   const selectedColor = COLORS.find((c) => c.id === colorId)
-  const related = product ? getRelatedProducts(product) : []
   const canAdd = Boolean(product && variantId && size)
+
+  if (loading) {
+    return <ProductPageSkeleton />
+  }
 
   const handleAdd = () => {
     if (!canAdd) return
@@ -76,7 +99,7 @@ export default function ProductPage() {
     setTimeout(() => setAdded(false), 1600)
   }
 
-  if (!product) {
+  if (notFound || !product) {
     return (
       <div className="min-h-screen bg-ivory">
         <Navbar solid />
@@ -236,7 +259,7 @@ export default function ProductPage() {
                   <div className="aspect-square overflow-hidden rounded-2xl">
                     <ProductPlaceholder
                       name={p.name}
-                      colors={p.colorPalette.map((c) => c.hex)}
+                      colors={(p.colorPalette || []).map((c) => c.hex)}
                     />
                   </div>
                   <p className="mt-3 font-display text-xl group-hover:text-dusty-rose">

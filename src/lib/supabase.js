@@ -9,7 +9,7 @@ if (!url || !anonKey) {
   )
 }
 
-/** Shared Supabase client — connected; tables/orders wiring comes later */
+/** Shared Supabase browser client (anon key only — never service_role). */
 export const supabase =
   url && anonKey ? createClient(url, anonKey) : null
 

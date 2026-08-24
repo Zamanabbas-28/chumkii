@@ -1,16 +1,41 @@
-# React + Vite
+# Chumki — handmade customized bangles (Sylhet)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Vite + React shop with guest checkout backed by Supabase.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Copy env file and fill in your project values:
 
-## React Compiler
+```bash
+cp .env.example .env
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
 
-## Expanding the Oxlint configuration
+Use the **anon** (public) key only. Never put the service_role key in the frontend or commit `.env`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+2. Install and run:
+
+```bash
+npm install
+npm run dev
+```
+
+## Supabase
+
+Schema, seed, RLS, and the `place_order` RPC live under [`supabase/`](supabase/).
+
+See [`supabase/README.md`](supabase/README.md) for linking the CLI and applying migrations.
+
+**Products** load from Supabase first; if the fetch fails or the catalog is empty, the app falls back to [`src/data/products.js`](src/data/products.js).
+
+**Orders** are created only through the secure `place_order` RPC (guest checkout). The Thank You page reads confirmation from `sessionStorage` — there is no public order lookup by order number.
+
+## Scripts
+
+- `npm run dev` — local Vite server
+- `npm run build` — production build
+- `npm run preview` — preview the build

@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom'
-import { getProductById } from '../data/products'
 import { useWishlist } from '../context/WishlistContext'
+import { useProducts } from '../hooks/useProducts'
 import { formatBDT } from '../utils/format'
 import ProductPlaceholder from './ProductPlaceholder'
 
 export default function RecentlyViewed() {
   const { recentIds } = useWishlist()
-  const items = recentIds.map(getProductById).filter(Boolean).slice(0, 4)
+  const { products, loading } = useProducts()
+
+  if (loading) return null
+
+  const byId = new Map(products.map((p) => [p.id, p]))
+  const items = recentIds.map((id) => byId.get(id)).filter(Boolean).slice(0, 4)
   if (!items.length) return null
 
   return (
@@ -21,7 +26,7 @@ export default function RecentlyViewed() {
               <div className="aspect-square overflow-hidden rounded-2xl">
                 <ProductPlaceholder
                   name={p.name}
-                  colors={p.colorPalette.map((c) => c.hex)}
+                  colors={(p.colorPalette || []).map((c) => c.hex)}
                 />
               </div>
               <p className="mt-2 font-display text-lg group-hover:text-dusty-rose">
