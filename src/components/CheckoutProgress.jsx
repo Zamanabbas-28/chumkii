@@ -1,23 +1,30 @@
 const STEPS = [
   { id: 'cart', label: 'Cart' },
   { id: 'checkout', label: 'Checkout' },
-  { id: 'confirmed', label: 'Confirmed' },
+  { id: 'payment', label: 'Payment' },
+  { id: 'confirmation', label: 'Confirmation' },
 ]
 
+/** Map legacy 'confirmed' step id used by older pages */
+const ALIASES = {
+  confirmed: 'confirmation',
+}
+
 export default function CheckoutProgress({ current = 'checkout' }) {
-  const currentIndex = STEPS.findIndex((s) => s.id === current)
+  const normalized = ALIASES[current] || current
+  const currentIndex = STEPS.findIndex((s) => s.id === normalized)
 
   return (
     <nav aria-label="Order progress" className="mb-8">
-      <ol className="flex items-center justify-center gap-2 sm:gap-4">
+      <ol className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         {STEPS.map((step, i) => {
           const active = i === currentIndex
           const done = i < currentIndex
           return (
-            <li key={step.id} className="flex items-center gap-2 sm:gap-4">
+            <li key={step.id} className="flex items-center gap-2 sm:gap-3">
               {i > 0 && (
                 <span
-                  className={`hidden h-px w-6 sm:block sm:w-10 ${
+                  className={`hidden h-px w-4 sm:block sm:w-8 ${
                     done || active ? 'bg-gold' : 'bg-border-soft'
                   }`}
                   aria-hidden

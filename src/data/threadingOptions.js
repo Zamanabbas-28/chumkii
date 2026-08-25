@@ -15,7 +15,7 @@ export const THREADING_OPTIONS = [
     name: 'Silver Threading',
     description:
       'Thin metallic silver thread wrapped over your base colour in a delicate spiral pattern.',
-    price: 100,
+    price: 0,
     preview: '/images/threading-silver-ref.png',
   },
 ]

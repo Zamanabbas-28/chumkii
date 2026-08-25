@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Check, Upload, X, ShoppingBag } from 'lucide-react'
 import {
   COLORS,
+  STONE_COLORS,
   SIZES,
   STYLES,
   SHAPES,
   SIZE_TYPES,
   DETAIL_OPTIONS,
+  STYLE_ADDON_PRICES,
 } from '../data/customizationOptions'
 import { THREADING_OPTIONS, getThreadingById } from '../data/threadingOptions'
 import { calcCustomPrice } from '../utils/pricing'
 import { formatBDT } from '../utils/format'
+import { getWhatsAppUrl, buildInquiryMessage } from '../data/contact'
 import { useCart } from '../context/CartContext'
 import ColorSelector from './ColorSelector'
 import BanglePreview from './BanglePreview'
@@ -68,19 +70,32 @@ export default function CustomBangleBuilder() {
   const baseHex =
     COLORS.find((c) => c.id === form.baseColor)?.hex || '#a78bbf'
   const accentHexes = form.accentColors
-    .map((id) => COLORS.find((c) => c.id === id)?.hex)
+    .map((id) => STONE_COLORS.find((c) => c.id === id)?.hex)
     .filter(Boolean)
 
-  const resolvedType = form.shape === 'square' ? 'small' : form.sizeType || 'small'
+  /** Round has no price until Big/Small is chosen; Square always has a size type. */
+  const sizeReady = form.shape === 'square' || Boolean(form.sizeType)
+  const resolvedType =
+    form.shape === 'square' ? 'small' : form.sizeType || null
 
-  const pricing = calcCustomPrice({
-    shape: form.shape || 'round',
-    sizeType: resolvedType,
-    styleId: form.styleId,
-    detailId: form.detailId,
-    threadingId: form.threadingId,
-    quantity: form.quantity,
-  })
+  const pricing = sizeReady
+    ? calcCustomPrice({
+        shape: form.shape || 'round',
+        sizeType: resolvedType,
+        styleId: form.styleId,
+        detailId: form.detailId,
+        threadingId: form.threadingId,
+        quantity: form.quantity,
+      })
+    : null
+
+  const priceLabel = pricing ? formatBDT(pricing.unit) : '—'
+  const surpriseWa = getWhatsAppUrl(
+    buildInquiryMessage({
+      Style: 'Surprise Me',
+      Note: 'Please help me choose a special Chumki design and confirm pricing.',
+    }),
+  )
 
   const validate = () => {
     const e = {}
@@ -117,9 +132,10 @@ export default function CustomBangleBuilder() {
   }
 
   const addToCart = () => {
+    if (!sizeReady || !pricing) return
     const base = COLORS.find((c) => c.id === form.baseColor)
     const accents = form.accentColors
-      .map((id) => COLORS.find((c) => c.id === id)?.name)
+      .map((id) => STONE_COLORS.find((c) => c.id === id)?.name)
       .filter(Boolean)
     addItem({
       kind: 'custom',
@@ -311,9 +327,12 @@ export default function CustomBangleBuilder() {
                     />
                   </div>
                   <div>
-                    <p className="mb-2 text-sm font-semibold">Accent colours</p>
+                    <p className="mb-2 text-sm font-semibold">Stone colours</p>
+                    <p className="mb-2 text-xs text-ink-soft">
+                      Accent stones and metallic details for your Chumki.
+                    </p>
                     <ColorSelector
-                      colors={COLORS}
+                      colors={STONE_COLORS}
                       multiple
                       values={form.accentColors}
                       onChange={(vals) => update({ accentColors: vals })}
@@ -336,24 +355,44 @@ export default function CustomBangleBuilder() {
                 <div>
                   <h3 className="font-display text-2xl text-ink">Design style</h3>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {STYLES.map((style) => (
-                      <button
-                        key={style.id}
-                        type="button"
-                        onClick={() => update({ styleId: style.id })}
-                        className={`rounded-2xl border p-4 text-left ${
-                          form.styleId === style.id
-                            ? 'border-gold bg-cream'
-                            : 'border-border-soft bg-ivory'
-                        }`}
-                      >
-                        <p className="font-display text-lg">{style.name}</p>
-                        <p className="mt-1 text-xs text-ink-soft">
-                          {style.description}
-                        </p>
-                      </button>
-                    ))}
+                    {STYLES.map((style) => {
+                      const addon = STYLE_ADDON_PRICES[style.id] ?? 0
+                      return (
+                        <button
+                          key={style.id}
+                          type="button"
+                          onClick={() => update({ styleId: style.id })}
+                          className={`rounded-2xl border p-4 text-left ${
+                            form.styleId === style.id
+                              ? 'border-gold bg-cream'
+                              : 'border-border-soft bg-ivory'
+                          }`}
+                        >
+                          <p className="font-display text-lg">{style.name}</p>
+                          <p className="mt-1 text-xs text-ink-soft">
+                            {style.description}
+                          </p>
+                          <p className="mt-2 text-xs font-semibold text-ink">
+                            {style.id === 'surprise'
+                              ? 'Confirm via WhatsApp DM'
+                              : addon > 0
+                                ? `+${formatBDT(addon)}`
+                                : formatBDT(0)}
+                          </p>
+                        </button>
+                      )
+                    })}
                   </div>
+                  {form.styleId === 'surprise' && surpriseWa && (
+                    <a
+                      href={surpriseWa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex text-sm font-medium text-dusty-rose underline-offset-2 hover:underline"
+                    >
+                      Message Chumki on WhatsApp →
+                    </a>
+                  )}
                 </div>
               )}
 
@@ -433,7 +472,14 @@ export default function CustomBangleBuilder() {
                   <dl className="space-y-2 rounded-2xl border border-border-soft bg-cream/50 p-4 text-sm">
                     {[
                       ['Shape', form.shape === 'square' ? 'Square' : 'Round'],
-                      ['Type', resolvedType === 'big' ? 'Big' : 'Small'],
+                      [
+                        'Type',
+                        resolvedType === 'big'
+                          ? 'Big'
+                          : resolvedType === 'small'
+                            ? 'Small'
+                            : '—',
+                      ],
                       ['Size', form.size],
                       [
                         'Base Colour',
@@ -442,7 +488,8 @@ export default function CustomBangleBuilder() {
                       [
                         'Accent Colour',
                         form.accentColors
-                          .map((id) => COLORS.find((c) => c.id === id)?.name)
+                          .map((id) => STONE_COLORS.find((c) => c.id === id)?.name)
+                          .filter(Boolean)
                           .join(', '),
                       ],
                       [
@@ -465,23 +512,30 @@ export default function CustomBangleBuilder() {
                     ))}
                   </dl>
                   <div className="rounded-2xl border border-border-soft bg-ivory p-4 text-sm">
-                    <div className="flex justify-between text-ink-soft">
-                      <span>Base</span>
-                      <span>{formatBDT(pricing.base)}</span>
-                    </div>
-                    <div className="mt-1 flex justify-between text-ink-soft">
-                      <span>Customization</span>
-                      <span>{formatBDT(pricing.customization)}</span>
-                    </div>
-                    <div className="mt-2 flex justify-between border-t border-border-soft pt-2 font-semibold">
-                      <span>Total</span>
-                      <span>{formatBDT(pricing.unit)}</span>
-                    </div>
+                    {pricing ? (
+                      <>
+                        <div className="flex justify-between text-ink-soft">
+                          <span>Base</span>
+                          <span>{formatBDT(pricing.base)}</span>
+                        </div>
+                        <div className="mt-1 flex justify-between text-ink-soft">
+                          <span>Customization</span>
+                          <span>{formatBDT(pricing.customization)}</span>
+                        </div>
+                        <div className="mt-2 flex justify-between border-t border-border-soft pt-2 font-semibold">
+                          <span>Total</span>
+                          <span>{formatBDT(pricing.unit)}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-ink-soft">Select Big or Small to see pricing.</p>
+                    )}
                   </div>
                   <button
                     type="button"
                     onClick={addToCart}
-                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-dusty-rose px-6 text-sm font-semibold text-ivory sm:w-auto"
+                    disabled={!pricing}
+                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-dusty-rose px-6 text-sm font-semibold text-ivory disabled:opacity-40 sm:w-auto"
                   >
                     <ShoppingBag size={18} />
                     Add Custom Bangle to Cart
@@ -495,14 +549,19 @@ export default function CustomBangleBuilder() {
         <div className="lg:sticky lg:top-24 lg:self-start">
           <BanglePreview
             shape={form.shape || 'round'}
-            sizeType={resolvedType}
+            sizeType={resolvedType || 'small'}
             baseColor={baseHex}
             accentColors={accentHexes}
             styleId={form.styleId}
             threadingId={form.threadingId}
           />
           <p className="mt-3 text-center text-sm font-semibold text-ink">
-            {formatBDT(pricing.unit)}
+            {priceLabel}
+            {!sizeReady && form.shape === 'round' ? (
+              <span className="mt-1 block text-xs font-normal text-ink-soft">
+                Select Big or Small to see price
+              </span>
+            ) : null}
           </p>
         </div>
       </div>

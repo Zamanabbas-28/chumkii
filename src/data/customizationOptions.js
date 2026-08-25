@@ -1,6 +1,6 @@
-import { STYLES, DETAIL_PREFERENCES, SIZES, COLORS } from './colors'
+import { STYLES, DETAIL_PREFERENCES, SIZES, COLORS, STONE_COLORS } from './colors'
 
-export { STYLES, DETAIL_PREFERENCES, SIZES, COLORS }
+export { STYLES, DETAIL_PREFERENCES, SIZES, COLORS, STONE_COLORS }
 
 export const SHAPES = [
   {
@@ -31,27 +31,30 @@ export const SIZE_TYPES = [
 /** Base prices for custom bangles by shape + size type (৳ BDT) — edit here */
 export const CUSTOM_BASE_PRICES = {
   round: {
-    big: 650,
-    small: 350,
+    big: 75,
+    small: 50,
   },
   square: {
-    small: 400,
+    small: 50,
   },
 }
 
-/** Optional add-on prices by design style (৳) — edit here */
+/**
+ * Style add-ons — same for Round Big, Round Small, and Square
+ * (only the base price differs by shape/size).
+ */
 export const STYLE_ADDON_PRICES = {
-  'simple-thread': 0,
-  'stone-work': 150,
-  'mirror-work': 120,
-  heavy: 200,
-  minimal: 0,
-  surprise: 100,
+  'simple-thread': 10,
+  'mirror-work': 20,
+  'stone-work': 25,
+  heavy: 30,
+  minimal: 15,
+  surprise: 0, // confirm via WhatsApp DM
 }
 
 export const DETAIL_OPTIONS = [
   { id: 'matching', name: 'Matching stones', price: 0 },
-  { id: 'contrasting', name: 'Contrasting stones', price: 50 },
+  { id: 'contrasting', name: 'Contrasting stones', price: 0 },
   { id: 'minimal', name: 'Minimal stones', price: 0 },
-  { id: 'extra', name: 'Extra embellishment', price: 100 },
+  { id: 'extra', name: 'Extra embellishment', price: 50 },
 ]

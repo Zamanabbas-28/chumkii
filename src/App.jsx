@@ -4,6 +4,7 @@ import { WishlistProvider } from './context/WishlistContext'
 import HomePage from './pages/HomePage'
 import ProductPage from './pages/ProductPage'
 import CheckoutPage from './pages/CheckoutPage'
+import PaymentPage from './pages/PaymentPage'
 import ThankYouPage from './pages/ThankYouPage'
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/:orderNumber" element={<PaymentPage />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
         </WishlistProvider>

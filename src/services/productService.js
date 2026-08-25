@@ -11,6 +11,7 @@ export const VARIANT_TO_DB = {
   stack: 'full_stack',
   big: 'big',
   small: 'small',
+  piece: 'small', // per-piece products (e.g. Charkona)
 }
 
 /** DB variant_type → frontend key */
@@ -32,6 +33,10 @@ const VARIANT_META = {
   small: {
     label: 'Small Bangle',
     description: 'Purchase only the smaller matching bangle.',
+  },
+  piece: {
+    label: 'Per piece',
+    description: 'One handmade bangle — priced per piece.',
   },
 }
 
@@ -74,9 +79,33 @@ export function normalizeProduct(row) {
     }
   }
 
+  // Charkona (and similar): single available `small` row sold as per-piece
+  if (
+    row.slug === 'charkona-kakan' &&
+    variants.small &&
+    !variants.stack &&
+    !variants.big
+  ) {
+    variants.piece = {
+      ...variants.small,
+      label: variants.small.label || 'Per piece',
+      description:
+        variants.small.description ||
+        VARIANT_META.piece.description,
+    }
+    delete variants.small
+  }
+
   const stackPrice = variants.stack?.price
+  const unitPrice =
+    stackPrice ??
+    variants.piece?.price ??
+    variants.big?.price ??
+    variants.small?.price ??
+    (Number(rows[0]?.price) || 0)
   const sizes =
     variants.stack?.availableSizes ||
+    variants.piece?.availableSizes ||
     variants.big?.availableSizes ||
     variants.small?.availableSizes ||
     SIZES
@@ -85,7 +114,7 @@ export function normalizeProduct(row) {
     id: row.slug,
     dbId: row.id,
     name: row.name,
-    price: stackPrice ?? (Number(rows[0]?.price) || 0),
+    price: unitPrice,
     variants,
     image: row.base_image || null,
     images: row.base_image ? [row.base_image] : [],

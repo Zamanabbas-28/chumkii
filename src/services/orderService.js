@@ -5,6 +5,7 @@ import {
   calculateDeliveryCharge,
   LAST_ORDER_KEY,
 } from '../utils/shipping'
+import { calculateAdvancePayment } from '../config/paymentConfig'
 import { VARIANT_TO_DB, resolveCatalogIds } from './productService'
 
 function newIdempotencyKey() {
@@ -34,9 +35,6 @@ function friendlyError(err) {
   return 'We could not place your order. Please try again in a moment.'
 }
 
-/**
- * Build RPC line items from the cart. Catalog lines resolve DB UUIDs when possible.
- */
 async function buildOrderItems(cartItems) {
   const lines = []
 
@@ -65,7 +63,8 @@ async function buildOrderItems(cartItems) {
     let variantType = null
 
     if (item.kind === 'custom') {
-      variantType = item.sizeType === 'big' ? 'big' : item.sizeType === 'small' ? 'small' : null
+      variantType =
+        item.sizeType === 'big' ? 'big' : item.sizeType === 'small' ? 'small' : null
     } else {
       variantType = VARIANT_TO_DB[item.variantId] || item.variantId || null
       const ids = await resolveCatalogIds(item.productId, item.variantId)
@@ -89,11 +88,26 @@ async function buildOrderItems(cartItems) {
   return lines
 }
 
+function persistConfirmation(confirmation) {
+  try {
+    sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(confirmation))
+    const prev = JSON.parse(localStorage.getItem('chumki-orders-v1') || '[]')
+    localStorage.setItem(
+      'chumki-orders-v1',
+      JSON.stringify([confirmation, ...prev].slice(0, 30)),
+    )
+  } catch {
+    try {
+      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(confirmation))
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 /**
  * Place a guest order via Supabase `place_order` RPC.
- * On success, writes confirmation payload to sessionStorage (Thank You page).
- *
- * @returns {{ ok: true, orderNumber, orderId, confirmation } | { ok: false, error }}
+ * Status starts as payment_pending; customer must complete advance payment next.
  */
 export async function placeOrder({
   form,
@@ -121,6 +135,10 @@ export async function placeOrder({
   const deliveryCharge = Number(deliveryInfo.delivery) || 0
   const sub = Number(subtotal) || 0
   const total = sub + deliveryCharge
+  const { advance, remaining } = calculateAdvancePayment({
+    total,
+    deliveryCharge,
+  })
   const key = idempotencyKey || newIdempotencyKey()
 
   const customer = {
@@ -165,8 +183,9 @@ export async function placeOrder({
 
     const orderNumber = data?.order_number
     const orderId = data?.order_id
+    const paymentToken = data?.payment_token
 
-    if (!orderNumber) {
+    if (!orderNumber || !paymentToken) {
       return {
         ok: false,
         error: friendlyError(new Error('missing order number')),
@@ -178,7 +197,9 @@ export async function placeOrder({
       id: orderNumber,
       orderId,
       createdAt: new Date().toISOString(),
-      status: data?.status || 'pending',
+      status: data?.status || 'payment_pending',
+      paymentStatus: 'pending_submission',
+      paymentToken,
       currency: 'BDT',
       duplicate: Boolean(data?.duplicate),
       customer: {
@@ -196,30 +217,20 @@ export async function placeOrder({
       items: items.map((i) => ({ ...i })),
       subtotal: sub,
       deliveryCharge,
-      total,
+      total: Number(data?.total ?? total),
+      advanceAmount: Number(data?.advance_amount ?? advance),
+      remainingAmount: Number(data?.remaining_amount ?? remaining),
       meta,
       idempotencyKey: key,
     }
 
-    try {
-      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(confirmation))
-      const prev = JSON.parse(localStorage.getItem('chumki-orders-v1') || '[]')
-      localStorage.setItem(
-        'chumki-orders-v1',
-        JSON.stringify([confirmation, ...prev].slice(0, 30)),
-      )
-    } catch {
-      try {
-        sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(confirmation))
-      } catch {
-        /* ignore */
-      }
-    }
+    persistConfirmation(confirmation)
 
     return {
       ok: true,
       orderNumber,
       orderId,
+      paymentToken,
       confirmation,
       idempotencyKey: key,
     }

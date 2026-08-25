@@ -1,20 +1,31 @@
+import { PAYMENT_CONFIG } from '../config/paymentConfig'
+
 /**
- * Contact & social links — replace WhatsApp when ready.
+ * Convert a BD local mobile (01XXXXXXXXX) to WhatsApp international digits.
+ */
+export function toWhatsAppIntl(localOrIntl) {
+  const digits = String(localOrIntl || '').replace(/\D/g, '')
+  if (!digits) return ''
+  if (digits.startsWith('880')) return digits
+  if (digits.startsWith('0')) return `88${digits}`
+  return `880${digits}`
+}
+
+/**
+ * Contact & social links.
+ * WhatsApp matches the bKash/Rocket payment number.
  * Instagram is live: @chumkii.ii
  */
 export const CONTACT = {
-  // Replace with your number in international format without + (e.g. 8801XXXXXXXXX)
-  whatsappNumber: 'YOUR_WHATSAPP_NUMBER',
+  whatsappNumber: toWhatsAppIntl(PAYMENT_CONFIG.payToNumber),
   instagramUrl: 'https://www.instagram.com/chumkii.ii/',
   instagramHandle: '@chumkii.ii',
-  email: '', // optional
+  email: '',
 }
 
 export function getWhatsAppUrl(message = '') {
   const num = CONTACT.whatsappNumber
-  if (!num || num === 'YOUR_WHATSAPP_NUMBER') {
-    return null
-  }
+  if (!num) return null
   const text = encodeURIComponent(message)
   return `https://wa.me/${num}${text ? `?text=${text}` : ''}`
 }

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 
 export default function ProductSelector({ variants, value, onChange }) {
   const entries = Object.entries(variants || {})
+  if (entries.length <= 1) return null
 
   return (
     <div>

@@ -157,7 +157,10 @@ export default function CheckoutForm() {
     clearCart()
     idempotencyRef.current = null
     setPlacing(false)
-    navigate(`/thank-you?ref=${encodeURIComponent(result.orderNumber)}`)
+    const token = encodeURIComponent(result.paymentToken || result.confirmation?.paymentToken || '')
+    navigate(
+      `/payment/${encodeURIComponent(result.orderNumber)}${token ? `?token=${token}` : ''}`,
+    )
   }
 
   if (!items.length) {

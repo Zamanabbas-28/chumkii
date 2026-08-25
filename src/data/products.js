@@ -1,6 +1,7 @@
 import { SIZES } from './colors'
 
-function variantsFromStackPrice(stackPrice) {
+/** Full Stack + explicit Big/Small prices (no auto %). */
+function variantsWithPrices(stackPrice, bigPrice, smallPrice) {
   return {
     stack: {
       label: 'Full Stack',
@@ -9,13 +10,25 @@ function variantsFromStackPrice(stackPrice) {
     },
     big: {
       label: 'Big Bangle',
-      price: Math.round(stackPrice * 0.45),
+      price: bigPrice,
       description: 'Purchase only the larger statement bangle.',
     },
     small: {
       label: 'Small Bangle',
-      price: Math.round(stackPrice * 0.25),
+      price: smallPrice,
       description: 'Purchase only the smaller matching bangle.',
+    },
+  }
+}
+
+/** Single per-piece product (no Full Stack / Big / Small choice).
+ * Uses frontend key `piece` (maps to DB `small`). */
+function variantsPerPiece(piecePrice) {
+  return {
+    piece: {
+      label: 'Per piece',
+      price: piecePrice,
+      description: 'One handmade square bangle — priced per piece.',
     },
   }
 }
@@ -24,8 +37,8 @@ export const products = [
   {
     id: 'ohona',
     name: 'OHONA',
-    price: 1200,
-    variants: variantsFromStackPrice(1200),
+    price: 350,
+    variants: variantsWithPrices(350, 150, 100),
     image: null,
     images: [],
     shortDescription:
@@ -49,16 +62,16 @@ export const products = [
   {
     id: 'charkona-kakan',
     name: 'Charkona Kakan',
-    price: 1100,
-    variants: variantsFromStackPrice(1100),
+    price: 100,
+    variants: variantsPerPiece(100),
     image: null,
     images: [],
     shortDescription:
       'Square silk-wrapped bangles with silver chumki and soothing jhunjhuri.',
     description:
-      'Beautifully sequenced with silver chumki and jhunjhuri, finished with smooth silk thread. Choose your own colour and stack.',
+      'Beautifully sequenced with silver chumki and jhunjhuri, finished with smooth silk thread. Sold per piece.',
     designDetails:
-      'Square frames with rounded corners, silver sequins, and corner bells. Perfect for colourful custom stacks.',
+      'Square frames with rounded corners, silver sequins, and corner bells. Priced ৳100 per piece.',
     sizes: SIZES,
     colorPalette: [
       { name: 'Lavender', hex: '#a78bbf' },
@@ -76,8 +89,8 @@ export const products = [
   {
     id: 'neela',
     name: 'NEELA',
-    price: 1500,
-    variants: variantsFromStackPrice(1500),
+    price: 250,
+    variants: variantsWithPrices(250, 100, 75),
     image: null,
     images: [],
     shortDescription:
@@ -102,8 +115,8 @@ export const products = [
   {
     id: 'dahlia',
     name: 'DAHLIA',
-    price: 1400,
-    variants: variantsFromStackPrice(1400),
+    price: 250,
+    variants: variantsWithPrices(250, 100, 75),
     image: null,
     images: [],
     shortDescription:
@@ -128,8 +141,8 @@ export const products = [
   {
     id: 'emerald-bloom',
     name: 'Emerald Bloom',
-    price: 1300,
-    variants: variantsFromStackPrice(1300),
+    price: 300,
+    variants: variantsWithPrices(300, 100, 75),
     image: null,
     images: [],
     shortDescription:
@@ -154,8 +167,8 @@ export const products = [
   {
     id: 'lavender-spark',
     name: 'Lavender Spark',
-    price: 1250,
-    variants: variantsFromStackPrice(1250),
+    price: 300,
+    variants: variantsWithPrices(300, 100, 75),
     image: null,
     images: [],
     shortDescription:
@@ -180,8 +193,8 @@ export const products = [
   {
     id: 'blush-gold',
     name: 'Blush & Gold',
-    price: 1350,
-    variants: variantsFromStackPrice(1350),
+    price: 300,
+    variants: variantsWithPrices(300, 100, 75),
     image: null,
     images: [],
     shortDescription:
@@ -206,8 +219,8 @@ export const products = [
   {
     id: 'royal-muse',
     name: 'Royal Muse',
-    price: 1600,
-    variants: variantsFromStackPrice(1600),
+    price: 300,
+    variants: variantsWithPrices(300, 100, 75),
     image: null,
     images: [],
     shortDescription:

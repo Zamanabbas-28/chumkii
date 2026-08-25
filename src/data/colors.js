@@ -15,13 +15,22 @@ export const COLORS = [
   { id: 'cream', name: 'Off-White', hex: '#f0e6d8' },
 ]
 
+/** Accent / stone palette for the customizer (not full thread colours). */
+export const STONE_COLORS = COLORS.filter((c) =>
+  ['gold', 'silver', 'cream', 'white'].includes(c.id),
+)
+
 export const STYLES = [
   { id: 'simple-thread', name: 'Simple Threadwork', description: 'Smooth silk wrapping with a clean finish' },
   { id: 'stone-work', name: 'Stone Work', description: 'Delicate stones and kundan-inspired details' },
   { id: 'mirror-work', name: 'Mirror Work', description: 'Tiny mirrors that catch the light' },
   { id: 'heavy', name: 'Heavy Embellishment', description: 'Bold sparkle for a statement look' },
   { id: 'minimal', name: 'Minimal Design', description: 'Subtle, elegant handcrafted details' },
-  { id: 'surprise', name: 'Surprise Me ✨', description: 'Let us create something special for you' },
+  {
+    id: 'surprise',
+    name: 'Surprise Me ✨',
+    description: 'Let us create something special — confirm details and pricing via WhatsApp DM',
+  },
 ]
 
 export const DETAIL_PREFERENCES = [

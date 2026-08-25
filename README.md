@@ -32,7 +32,9 @@ See [`supabase/README.md`](supabase/README.md) for linking the CLI and applying 
 
 **Products** load from Supabase first; if the fetch fails or the catalog is empty, the app falls back to [`src/data/products.js`](src/data/products.js).
 
-**Orders** are created only through the secure `place_order` RPC (guest checkout). The Thank You page reads confirmation from `sessionStorage` — there is no public order lookup by order number.
+**Orders** are created through the secure `place_order` RPC (guest checkout). After Place Order, customers complete an **advance payment** (delivery charge only) at `/payment/:orderNumber`, upload a private screenshot proof, then see Thank You with status **Awaiting Verification**. There is no public order lookup by order number alone.
+
+See [`supabase/README.md`](supabase/README.md) for payment statuses, the private `payment-proofs` bucket, and how a future admin can verify or reject payments.
 
 ## Scripts
 
