@@ -12,6 +12,7 @@ import {
 } from '../utils/shipping'
 import CartItem from './CartItem'
 import CheckoutProgress from './CheckoutProgress'
+import ContactChoiceModal from './ContactChoiceModal'
 
 function readSavedDistrictId() {
   try {
@@ -34,6 +35,7 @@ export default function CartDrawer() {
   } = useCart()
 
   const [districtId, setDistrictId] = useState('')
+  const [contactModalOpen, setContactModalOpen] = useState(false)
 
   useEffect(() => {
     if (cartOpen) setDistrictId(readSavedDistrictId())
@@ -164,9 +166,25 @@ export default function CartDrawer() {
                 >
                   Checkout
                 </Link>
+                <p className="mt-2.5 text-center text-[11px] text-ink-soft">
+                  Need a bespoke piece?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setContactModalOpen(true)}
+                    className="font-medium text-dusty-rose underline-offset-2 hover:underline"
+                  >
+                    DM us for custom requests
+                  </button>
+                </p>
               </div>
             )}
           </motion.aside>
+
+          <ContactChoiceModal
+            isOpen={contactModalOpen}
+            onClose={() => setContactModalOpen(false)}
+            customMessage="Hi Chumki! ✨ I'd like to ask about a customized bangle set."
+          />
         </motion.div>
       )}
     </AnimatePresence>,

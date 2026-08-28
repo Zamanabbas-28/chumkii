@@ -9,7 +9,7 @@ import InstagramIcon from './InstagramIcon'
 
 const links = [
   { label: 'Shop', id: 'designs' },
-  { label: 'Customize', id: 'customize' },
+  { label: 'Custom Orders', id: 'customize' },
   { label: 'Size Guide', id: 'size-guide' },
   { label: 'About', id: 'about' },
   { label: 'Contact', id: 'contact' },

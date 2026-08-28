@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { Search, Sparkles } from 'lucide-react'
 
 export default function SearchAndFilters({
   query,
@@ -32,10 +32,10 @@ export default function SearchAndFilters({
             key={id}
             type="button"
             onClick={() => onFiltersChange({ ...filters, shape: id })}
-            className={`min-h-10 rounded-full px-3 text-xs font-semibold ${
+            className={`min-h-10 rounded-full px-3 text-xs font-semibold transition ${
               filters.shape === id
                 ? 'bg-ink text-ivory'
-                : 'border border-border-soft bg-ivory text-ink-soft'
+                : 'border border-border-soft bg-ivory text-ink-soft hover:border-gold/40'
             }`}
           >
             {label}
@@ -46,16 +46,17 @@ export default function SearchAndFilters({
           onClick={() =>
             onFiltersChange({
               ...filters,
-              customizableOnly: !filters.customizableOnly,
+              featuredOnly: !filters.featuredOnly,
             })
           }
-          className={`min-h-10 rounded-full px-3 text-xs font-semibold ${
-            filters.customizableOnly
-              ? 'bg-dusty-rose text-ivory'
-              : 'border border-border-soft bg-ivory text-ink-soft'
+          className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold transition ${
+            filters.featuredOnly
+              ? 'bg-ink text-ivory'
+              : 'border border-border-soft bg-ivory text-ink-soft hover:border-gold/40'
           }`}
         >
-          Customizable
+          <Sparkles size={13} className={filters.featuredOnly ? 'text-gold' : 'text-muted-gold'} />
+          Featured Stacks
         </button>
       </div>
     </div>

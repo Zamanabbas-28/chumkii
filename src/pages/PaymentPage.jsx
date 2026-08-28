@@ -28,13 +28,23 @@ function loadSessionOrder() {
 function itemLine(item) {
   const parts = []
   const custom = item.customization_data || {}
-  if (item.variant_type) parts.push(String(item.variant_type).replace('full_stack', 'Full Stack'))
-  if (custom.variantLabel) parts.push(custom.variantLabel)
-  if (item.size) parts.push(`Size ${item.size}`)
-  if (custom.color) parts.push(custom.color)
-  if (item.variantLabel) parts.push(item.variantLabel)
-  if (item.size && !parts.some((p) => p.includes(item.size))) parts.push(`Size ${item.size}`)
-  if (item.color) parts.push(item.color)
+  const variant = custom.variantLabel || (item.variant_type ? String(item.variant_type).replace('full_stack', 'Full Stack') : '')
+  if (variant) parts.push(variant)
+  if (item.size) parts.push(`Size ${item.size}"`)
+
+  if (custom.isOriginalColor) {
+    parts.push('Original Colors')
+  } else {
+    const hasBig = custom.bigColorPreference && custom.bigColorPreference !== 'original'
+    const hasSmall = custom.smallColorPreference && custom.smallColorPreference !== 'original'
+    const hasPiece = custom.pieceColorPreference && custom.pieceColorPreference !== 'original'
+
+    if (hasBig) parts.push(`Big: ${custom.bigColorLabel || custom.bigColorPreference}`)
+    if (hasSmall) parts.push(`Small: ${custom.smallColorLabel || custom.smallColorPreference}`)
+    if (hasPiece) parts.push(`Color: ${custom.pieceColorLabel || custom.pieceColorPreference}`)
+    if (!hasBig && !hasSmall && !hasPiece && custom.color) parts.push(custom.color)
+  }
+
   return parts.filter(Boolean).join(' · ')
 }
 

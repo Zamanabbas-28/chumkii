@@ -28,7 +28,7 @@ export default function Footer() {
         <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-ink-soft">
           {[
             ['Shop', 'designs'],
-            ['Customize', 'customize'],
+            ['Custom Orders', 'customize'],
             ['Size Guide', 'size-guide'],
             ['About', 'about'],
             ['Contact', 'contact'],

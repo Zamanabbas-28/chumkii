@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useProducts } from '../hooks/useProducts'
 import ProductCard from './ProductCard'
 import SearchAndFilters from './SearchAndFilters'
+import DmCustomizationCta from './DmCustomizationCta'
 
 function ProductSkeleton() {
   return (
@@ -17,7 +18,7 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
   const { products, loading } = useProducts()
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState({
-    customizableOnly: false,
+    featuredOnly: false,
     shape: 'all',
   })
 
@@ -29,8 +30,8 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
     if (filters.shape !== 'all') {
       result = result.filter((p) => p.shape === filters.shape)
     }
-    if (filters.customizableOnly) {
-      result = result.filter((p) => p.customizable)
+    if (filters.featuredOnly) {
+      result = result.filter((p) => p.featured)
     }
     const q = query.trim().toLowerCase()
     if (q) {
@@ -59,8 +60,8 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
           Shop Chumki
         </h2>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft sm:text-base">
-          Choose a design, pick Full Stack, Big, or Small, select your size, and
-          add to cart.
+          Choose a ready-made stack, pick Full Stack, Big, or Small, select your size,
+          and choose your color preferences.
         </p>
 
         <div className="mt-8">
@@ -102,6 +103,15 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
             No designs match your search — try clearing filters.
           </p>
         )}
+
+        {/* Subtle DM Customization invite below collection */}
+        <div className="mt-14">
+          <DmCustomizationCta
+            compact
+            title="Looking for a design or colorway not listed here? ✨"
+            description="We love making bespoke stacks! Send us a message on WhatsApp or Instagram with your idea."
+          />
+        </div>
       </div>
     </section>
   )

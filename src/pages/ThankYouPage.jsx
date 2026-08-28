@@ -8,7 +8,6 @@ import CartDrawer from '../components/CartDrawer'
 import CheckoutProgress from '../components/CheckoutProgress'
 import OrderStatus from '../components/OrderStatus'
 import { formatBDT } from '../utils/format'
-import { getThreadingById } from '../data/threadingOptions'
 import { LAST_ORDER_KEY } from '../utils/shipping'
 import {
   getPaymentStatusLabel,
@@ -31,17 +30,28 @@ function itemLine(i) {
   if (i.kind === 'custom') {
     parts.push(i.shape === 'square' ? 'Square' : 'Round')
     if (i.sizeType) parts.push(i.sizeType === 'big' ? 'Big' : 'Small')
-  } else if (i.variantLabel) {
-    parts.push(i.variantLabel)
+    if (i.size) parts.push(`Size ${i.size}"`)
+    if (i.color) parts.push(i.color)
+    if (i.accentLabel) parts.push(`Accent ${i.accentLabel}`)
+    return parts.filter(Boolean).join(' · ')
   }
-  if (i.size) parts.push(`Size ${i.size}`)
-  if (i.color) parts.push(i.color)
-  if (i.accentLabel) parts.push(`Accent ${i.accentLabel}`)
-  if (i.styleId) parts.push(i.styleId)
-  if (i.detailId) parts.push(i.detailId)
-  if (i.threadingId && i.threadingId !== 'none') {
-    parts.push(getThreadingById(i.threadingId).name)
+
+  if (i.variantLabel) parts.push(i.variantLabel)
+  if (i.size) parts.push(`Size ${i.size}"`)
+
+  if (i.isOriginalColor) {
+    parts.push('Original Colors')
+  } else {
+    const hasBig = i.bigColorPreference && i.bigColorPreference !== 'original'
+    const hasSmall = i.smallColorPreference && i.smallColorPreference !== 'original'
+    const hasPiece = i.pieceColorPreference && i.pieceColorPreference !== 'original'
+
+    if (hasBig) parts.push(`Big: ${i.bigColorLabel || i.bigColorPreference}`)
+    if (hasSmall) parts.push(`Small: ${i.smallColorLabel || i.smallColorPreference}`)
+    if (hasPiece) parts.push(`Color: ${i.pieceColorLabel || i.pieceColorPreference}`)
+    if (!hasBig && !hasSmall && !hasPiece && i.color) parts.push(i.color)
   }
+
   return parts.filter(Boolean).join(' · ')
 }
 

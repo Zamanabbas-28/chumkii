@@ -601,8 +601,38 @@ create trigger payments_set_updated_at
 alter table public.payments enable row level security;
 -- No public SELECT/INSERT/UPDATE/DELETE policies — access via security definer RPCs only
 
+-- Helper function to validate delivery charges server-side
+create or replace function public.calculate_server_delivery_charge(
+  p_district_id text,
+  p_district_name text,
+  p_total_qty int
+)
+returns numeric
+language plpgsql
+immutable
+as $$
+declare
+  v_dist text;
+  v_base numeric;
+  v_platform_fee numeric := 10;
+begin
+  v_dist := lower(trim(coalesce(nullif(p_district_id, ''), nullif(p_district_name, ''), '')));
+  
+  if v_dist in ('sylhet', 'moulvibazar', 'habiganj', 'sunamganj') then
+    v_base := 60;
+  elsif v_dist = 'dhaka' then
+    v_base := 105;
+  else
+    v_base := 125;
+  end if;
+
+  return v_base + v_platform_fee;
+end;
+$$;
+
 -- ---------------------------------------------------------------------------
 -- place_order: payment_pending + token + advance = delivery charge
+-- with server-side price & shipping validation
 -- ---------------------------------------------------------------------------
 create or replace function public.place_order(
   p_customer jsonb,
@@ -628,6 +658,16 @@ declare
   v_token text;
   v_advance numeric(12, 2);
   v_remaining numeric(12, 2);
+  
+  v_calculated_subtotal numeric(12, 2) := 0;
+  v_calculated_delivery numeric(12, 2) := 0;
+  v_total_qty int := 0;
+  v_item_qty int;
+  v_item_unit_price numeric(12, 2);
+  v_item_total_price numeric(12, 2);
+  v_variant_id uuid;
+  v_product_id uuid;
+  v_db_price numeric(12, 2);
 begin
   if p_idempotency_key is not null and length(trim(p_idempotency_key)) > 0 then
     select * into v_existing
@@ -666,13 +706,56 @@ begin
     raise exception 'INVALID_ITEMS' using errcode = 'P0001';
   end if;
 
-  if p_subtotal is null or p_subtotal < 0
-     or p_delivery_charge is null or p_delivery_charge < 0
-     or p_total is null or p_total < 0 then
+  for v_item in select * from jsonb_array_elements(p_items)
+  loop
+    v_item_qty := coalesce((v_item->>'quantity')::int, 0);
+    if v_item_qty < 1 then
+      raise exception 'INVALID_ITEM_QTY' using errcode = 'P0001';
+    end if;
+    v_total_qty := v_total_qty + v_item_qty;
+
+    v_item_unit_price := coalesce((v_item->>'unit_price')::numeric, -1);
+    v_item_total_price := coalesce((v_item->>'total_price')::numeric, -1);
+    if v_item_unit_price < 0 or v_item_total_price < 0 then
+      raise exception 'INVALID_ITEM_PRICE' using errcode = 'P0001';
+    end if;
+
+    v_variant_id := nullif(v_item->>'variant_id', '')::uuid;
+    v_product_id := nullif(v_item->>'product_id', '')::uuid;
+    
+    if v_variant_id is not null then
+      select price into v_db_price
+      from public.product_variants
+      where id = v_variant_id and is_available = true;
+
+      if found and v_db_price is not null then
+        if v_item_unit_price <> v_db_price then
+          raise exception 'PRICE_MANIPULATION_DETECTED' using errcode = 'P0001';
+        end if;
+      end if;
+    end if;
+
+    v_calculated_subtotal := v_calculated_subtotal + (v_item_unit_price * v_item_qty);
+  end loop;
+
+  if abs(p_subtotal - v_calculated_subtotal) > 0.01 then
+    raise exception 'INVALID_SUBTOTAL' using errcode = 'P0001';
+  end if;
+
+  v_calculated_delivery := public.calculate_server_delivery_charge(
+    p_delivery->>'district_id',
+    p_delivery->>'district',
+    v_total_qty
+  );
+
+  if abs(p_delivery_charge - v_calculated_delivery) > 0.01 then
+    raise exception 'INVALID_DELIVERY_CHARGE' using errcode = 'P0001';
+  end if;
+
+  if abs(p_total - (p_subtotal + p_delivery_charge)) > 0.01 then
     raise exception 'INVALID_TOTALS' using errcode = 'P0001';
   end if;
 
-  -- Advance = delivery charge only
   v_advance := p_delivery_charge;
   v_remaining := greatest(p_total - v_advance, 0);
 
@@ -734,14 +817,6 @@ begin
 
   for v_item in select * from jsonb_array_elements(p_items)
   loop
-    if coalesce((v_item->>'quantity')::int, 0) < 1 then
-      raise exception 'INVALID_ITEM_QTY' using errcode = 'P0001';
-    end if;
-    if coalesce((v_item->>'unit_price')::numeric, -1) < 0
-       or coalesce((v_item->>'total_price')::numeric, -1) < 0 then
-      raise exception 'INVALID_ITEM_PRICE' using errcode = 'P0001';
-    end if;
-
     insert into public.order_items (
       order_id,
       product_id,

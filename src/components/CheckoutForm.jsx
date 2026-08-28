@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { formatBDT } from '../utils/format'
-import { getThreadingById } from '../data/threadingOptions'
 import { SHIPPING } from '../data/shipping'
 import {
   getCartItemQuantity,
@@ -33,15 +32,28 @@ function itemDetailsLine(i) {
   if (i.kind === 'custom') {
     parts.push(i.shape === 'square' ? 'Square' : 'Round')
     if (i.sizeType) parts.push(i.sizeType === 'big' ? 'Big' : 'Small')
-  } else if (i.variantLabel) {
-    parts.push(i.variantLabel)
+    if (i.size) parts.push(`Size ${i.size}"`)
+    if (i.color) parts.push(i.color)
+    if (i.accentLabel) parts.push(`Accent ${i.accentLabel}`)
+    return parts.join(' · ')
   }
-  if (i.size) parts.push(`Size ${i.size}`)
-  if (i.color) parts.push(i.color)
-  if (i.accentLabel) parts.push(`Accent ${i.accentLabel}`)
-  if (i.threadingId && i.threadingId !== 'none') {
-    parts.push(getThreadingById(i.threadingId).name)
+
+  if (i.variantLabel) parts.push(i.variantLabel)
+  if (i.size) parts.push(`Size ${i.size}"`)
+
+  if (i.isOriginalColor) {
+    parts.push('Original Colors')
+  } else {
+    const hasBig = i.bigColorPreference && i.bigColorPreference !== 'original'
+    const hasSmall = i.smallColorPreference && i.smallColorPreference !== 'original'
+    const hasPiece = i.pieceColorPreference && i.pieceColorPreference !== 'original'
+
+    if (hasBig) parts.push(`Big: ${i.bigColorLabel || i.bigColorPreference}`)
+    if (hasSmall) parts.push(`Small: ${i.smallColorLabel || i.smallColorPreference}`)
+    if (hasPiece) parts.push(`Color: ${i.pieceColorLabel || i.pieceColorPreference}`)
+    if (!hasBig && !hasSmall && !hasPiece && i.color) parts.push(i.color)
   }
+
   return parts.join(' · ')
 }
 

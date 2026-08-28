@@ -3,23 +3,23 @@ import { motion } from 'framer-motion'
 const steps = [
   {
     n: '01',
-    title: 'Share Your Idea',
-    text: 'Choose a design or tell us what you have in mind.',
+    title: 'DM Us Your Idea',
+    text: 'Reach out on WhatsApp or Instagram with your style or color inspirations.',
   },
   {
     n: '02',
-    title: 'Pick Your Colours & Details',
-    text: "We'll use your preferences as inspiration for your piece.",
+    title: 'Choose Colours & Details',
+    text: "We'll suggest combinations and confirm all design touches with you.",
   },
   {
     n: '03',
-    title: 'Choose Your Size',
-    text: 'Make sure your Chumki feels comfortable and fits just right.',
+    title: 'Confirm Your Size',
+    text: 'Pick your exact bangle size (2.2" to 2.8") for a comfortable fit.',
   },
   {
     n: '04',
-    title: "We'll Create It With Care",
-    text: 'Your customized bangles are prepared with attention to every little detail.',
+    title: "We'll Handcraft & Deliver",
+    text: 'Your customized piece is handmade with love and delivered across Bangladesh.',
   },
 ]
 

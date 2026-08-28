@@ -35,7 +35,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.06 }}
             className="mt-3 max-w-lg font-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl"
           >
-            Handmade bangles you can shop — stack, big, or small — and customize with colours & silver threading.
+            Handmade bangles you can shop — Full Stack, Big, or Small — with gentle color preferences.
           </motion.h1>
 
           <motion.p
@@ -44,9 +44,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.12 }}
             className="mt-4 max-w-md text-sm leading-relaxed text-ink-soft sm:text-base"
           >
-            Shop ready-made stacks, pick your size, add to cart, and checkout.
-            Photos coming soon — every design uses a colour placeholder until
-            you upload real shots.
+            Shop our ready-made collections, pick your size, and choose your preferred colors. Looking for something completely unique? We take custom orders via DM.
           </motion.p>
 
           <motion.div
@@ -58,16 +56,16 @@ export default function Hero() {
             <button
               type="button"
               onClick={() => scrollToId('designs')}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-7 text-sm font-semibold text-ivory transition hover:bg-ink/90"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-7 text-sm font-semibold text-ivory transition hover:bg-ink/90 active:scale-95"
             >
-              Shop now
+              Shop collections
             </button>
             <button
               type="button"
               onClick={() => scrollToId('customize')}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-border-soft bg-ivory/80 px-7 text-sm font-semibold text-ink transition hover:border-gold"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-border-soft bg-ivory/80 px-7 text-sm font-semibold text-ink transition hover:border-gold active:scale-95"
             >
-              Customize yours
+              Custom via DM
             </button>
           </motion.div>
         </div>
