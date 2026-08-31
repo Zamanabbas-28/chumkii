@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { scrollToId } from '../utils/format'
-import ProductPlaceholder from './ProductPlaceholder'
 
 export default function Hero() {
   return (
@@ -74,11 +73,13 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] border border-border-soft shadow-sm"
+          className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center overflow-hidden rounded-[2rem] border border-border-soft/80 bg-cream/50 p-6 shadow-sm"
         >
-          <ProductPlaceholder
-            name="Hero"
-            colors={['#1a2744', '#f0e6d8', '#c4a574']}
+          <img
+            src="/images/products/ohona-1.jpg"
+            alt="OHONA handmade silk bangle set by Chumki"
+            className="max-h-full max-w-full object-contain drop-shadow-md"
+            loading="eager"
           />
         </motion.div>
       </div>

@@ -395,35 +395,30 @@ export default function ProductPage() {
         </div>
 
         {/* Related Designs */}
-        {related.length > 0 && (
+        {related.filter((p) => p.image).length > 0 && (
           <section className="mt-16">
             <h2 className="font-display text-3xl text-ink">Related designs</h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {related.map((p) => (
-                <Link key={p.id} to={`/product/${p.id}`} className="group">
-                  <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-3">
-                    {p.image ? (
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related
+                .filter((p) => p.image)
+                .map((p) => (
+                  <Link key={p.id} to={`/product/${p.id}`} className="group">
+                    <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-3">
                       <img
                         src={p.image}
                         alt={`${p.name} bangle set by Chumki`}
                         className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
                         loading="lazy"
                       />
-                    ) : (
-                      <ProductPlaceholder
-                        name={p.name}
-                        colors={(p.colorPalette || []).map((c) => c.hex)}
-                      />
-                    )}
-                  </div>
-                  <p className="mt-3 font-display text-xl group-hover:text-dusty-rose">
-                    {p.name}
-                  </p>
-                  <p className="text-sm text-ink-soft">
-                    From {formatBDT(p.variants?.stack?.price ?? p.price)}
-                  </p>
-                </Link>
-              ))}
+                    </div>
+                    <p className="mt-3 font-display text-xl group-hover:text-dusty-rose">
+                      {p.name}
+                    </p>
+                    <p className="text-sm text-ink-soft">
+                      From {formatBDT(p.variants?.stack?.price ?? p.price)}
+                    </p>
+                  </Link>
+                ))}
             </div>
           </section>
         )}

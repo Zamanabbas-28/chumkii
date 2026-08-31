@@ -182,19 +182,35 @@ const PRODUCT_SELECT = `
   )
 `
 
+function isValidProductImage(p) {
+  if (!p) return false
+  const img = p.image || (Array.isArray(p.images) && p.images[0])
+  if (!img || typeof img !== 'string') return false
+  const trimmed = img.trim()
+  return (
+    trimmed.length > 0 &&
+    !trimmed.includes('placeholder') &&
+    (trimmed.startsWith('/') || trimmed.startsWith('http://') || trimmed.startsWith('https://'))
+  )
+}
+
 function withLocalFallback(reason) {
   if (reason) {
     console.warn('[productService] using local catalog fallback:', reason)
   }
+  const fallbackList = localProducts
+    .filter(isValidProductImage)
+    .map((p) => ({ ...p, fromFallback: true }))
+
   return {
-    products: localProducts.map((p) => ({ ...p, fromFallback: true })),
+    products: fallbackList,
     fromFallback: true,
     error: reason || null,
   }
 }
 
 /**
- * Fetch all active products with variants.
+ * Fetch all active products with variants and valid real photos.
  * Falls back to local `data/products.js` if Supabase is missing, errors, or empty.
  */
 export async function fetchProducts() {
@@ -215,7 +231,12 @@ export async function fetchProducts() {
 
     const list = (data || [])
       .map(normalizeProduct)
-      .filter((p) => p && Object.keys(p.variants || {}).length > 0)
+      .filter(
+        (p) =>
+          p &&
+          Object.keys(p.variants || {}).length > 0 &&
+          isValidProductImage(p)
+      )
 
     if (!list.length) {
       return withLocalFallback('No active products in database')

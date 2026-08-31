@@ -380,7 +380,7 @@ insert into public.products (
   'Bold fuchsia and lime pairing with kundan stones, stars, and soft ghungroo details.',
   'colorful-threads', '/images/products/dahlia-1.jpg', 'round',
   '[{"name":"Fuchsia","hex":"#d9468f"},{"name":"Lime","hex":"#8fbf3a"},{"name":"Gold","hex":"#c4a574"}]'::jsonb,
-  array['fuchsia','lime','pink','emerald','gold'], true, true, false
+  array['fuchsia','lime','pink','emerald','gold'], true, true, true
 ),
 (
   'emerald-bloom', 'Emerald Bloom',
@@ -389,7 +389,7 @@ insert into public.products (
   'Deep green silk wrap with gold accents.',
   'stone-mirror', null, 'round',
   '[{"name":"Emerald","hex":"#2d5a4a"},{"name":"Gold","hex":"#c4a574"},{"name":"Cream","hex":"#f0e6d8"}]'::jsonb,
-  array['emerald','lime','gold','cream'], true, true, false
+  array['emerald','lime','gold','cream'], true, false, false
 ),
 (
   'lavender-spark', 'Lavender Spark',
@@ -398,7 +398,7 @@ insert into public.products (
   'Lavender thread with soft silver sparkle and blush accents.',
   'colorful-threads', null, 'round',
   '[{"name":"Lavender","hex":"#a78bbf"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Blush","hex":"#d4a5a5"}]'::jsonb,
-  array['lavender','purple','pink','silver'], true, true, false
+  array['lavender','purple','pink','silver'], true, false, false
 ),
 (
   'blush-gold', 'Blush & Gold',
@@ -407,7 +407,7 @@ insert into public.products (
   'Blush silk with muted gold metallic accents.',
   'modern-minimal', null, 'round',
   '[{"name":"Blush","hex":"#d4a5a5"},{"name":"Gold","hex":"#c4a574"},{"name":"Cream","hex":"#f0e6d8"}]'::jsonb,
-  array['pink','gold','cream','white'], true, true, false
+  array['pink','gold','cream','white'], true, false, false
 ),
 (
   'royal-muse', 'Royal Muse',
@@ -416,7 +416,7 @@ insert into public.products (
   'Royal blue with gold and silver accents.',
   'stone-mirror', null, 'round',
   '[{"name":"Royal Blue","hex":"#1e3a8a"},{"name":"Gold","hex":"#c4a574"},{"name":"Silver","hex":"#c0c0c0"}]'::jsonb,
-  array['royal-blue','navy','gold','silver'], true, true, true
+  array['royal-blue','navy','gold','silver'], true, false, false
 )
 on conflict (slug) do update set
   name = excluded.name,

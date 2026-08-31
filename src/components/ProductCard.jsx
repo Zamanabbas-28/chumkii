@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { formatBDT } from '../utils/format'
-import ProductPlaceholder from './ProductPlaceholder'
 import WishlistButton from './WishlistButton'
 
 export default function ProductCard({ product }) {
-  const palette = product.colorPalette.map((c) => c.hex)
+  const [imageFailed, setImageFailed] = useState(false)
   const fromPrice = product.variants?.stack?.price ?? product.price
+
+  if (!product.image || imageFailed) {
+    return null
+  }
 
   return (
     <motion.article
@@ -21,18 +25,13 @@ export default function ProductCard({ product }) {
         to={`/product/${product.id}`}
         className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-3 sm:p-4"
       >
-        {product.image ? (
-          <img
-            src={product.image}
-            alt={`${product.name} bangle set by Chumki`}
-            className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
-            loading="lazy"
-          />
-        ) : (
-          <div className="h-full w-full transition duration-500 group-hover:scale-[1.03]">
-            <ProductPlaceholder name={product.name} colors={palette} />
-          </div>
-        )}
+        <img
+          src={product.image}
+          alt={`${product.name} bangle set by Chumki`}
+          className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+        />
         {product.availableColors && product.availableColors.length > 1 && (
           <span className="absolute left-3 top-3 rounded-full bg-ivory/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink shadow-sm">
             Color Options
@@ -60,7 +59,7 @@ export default function ProductCard({ product }) {
         </p>
         <div className="flex items-center gap-2 pt-1">
           <div className="flex -space-x-1">
-            {product.colorPalette.map((c) => (
+            {product.colorPalette?.map((c) => (
               <span
                 key={c.hex + c.name}
                 title={c.name}

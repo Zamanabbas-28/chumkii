@@ -5,7 +5,6 @@ import CategorySection from '../components/CategorySection'
 import FeaturedCreations from '../components/FeaturedCreations'
 import CustomizationSection from '../components/CustomizationSection'
 import SizeGuide from '../components/SizeGuide'
-import InspirationGallery from '../components/InspirationGallery'
 import HowItWorks from '../components/HowItWorks'
 import About from '../components/About'
 import FAQ from '../components/FAQ'
@@ -41,7 +40,6 @@ export default function HomePage() {
         <RecentlyViewed />
         <CustomizationSection />
         <SizeGuide />
-        <InspirationGallery />
         <HowItWorks />
         <About />
         <FAQ />
