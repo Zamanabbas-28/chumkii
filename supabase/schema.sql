@@ -344,14 +344,14 @@ create policy "Public read available variants"
 -- ---------------------------------------------------------------------------
 insert into public.products (
   slug, name, short_description, description, design_details, category,
-  shape, color_palette, available_colors, is_customizable, is_active, is_featured
+  base_image, shape, color_palette, available_colors, is_customizable, is_active, is_featured
 ) values
 (
   'ohona', 'OHONA',
   'Smooth finishing thread work in a black and silver Y2K-inspired stack.',
   'Smooth finishing thread work with a black and silver combination in a soft Y2K style — made to match your everyday fit.',
   'Silk-thread wrapped stack with silver sequin vine details and mirror accents. Handmade in Sylhet.',
-  'modern-minimal', 'round',
+  'modern-minimal', '/images/products/ohona-1.jpg', 'round',
   '[{"name":"Black","hex":"#1a1a1a"},{"name":"Silver","hex":"#c0c0c0"}]'::jsonb,
   array['black','silver','white','gold'], true, true, true
 ),
@@ -360,7 +360,7 @@ insert into public.products (
   'Square silk-wrapped bangles with silver chumki and soothing jhunjhuri.',
   'Beautifully sequenced with silver chumki and jhunjhuri, finished with smooth silk thread. Choose your own colour and stack.',
   'Square frames with rounded corners, silver sequins, and corner bells.',
-  'traditional', 'square',
+  'traditional', '/images/products/charkona-1.jpg', 'square',
   '[{"name":"Lavender","hex":"#a78bbf"},{"name":"Fuchsia","hex":"#d9468f"},{"name":"Lime","hex":"#8fbf3a"},{"name":"Black","hex":"#1a1a1a"}]'::jsonb,
   array['lavender','pink','lime','black','red','emerald','gold'], true, true, true
 ),
@@ -369,7 +369,7 @@ insert into public.products (
   'Vibrant navy kundan work with soft off-white contrast stacks.',
   'Smooth finishing of thread work along with kundan in a vibrant blue, set against an off-white contrast.',
   'Navy statement centre with cream companions and gold-toned kundan stone settings.',
-  'stone-mirror', 'round',
+  'stone-mirror', '/images/products/neela-1.jpg', 'round',
   '[{"name":"Navy","hex":"#1a2744"},{"name":"Off-White","hex":"#f0e6d8"},{"name":"Gold","hex":"#c4a574"}]'::jsonb,
   array['navy','royal-blue','cream','gold','silver'], true, true, true
 ),
@@ -378,7 +378,7 @@ insert into public.products (
   'Fuchsia and lime stacks with kundan sparkle and ghungroo accents.',
   'Beautifully sequenced handmade bangles with kundan and smooth thread finishing.',
   'Bold fuchsia and lime pairing with kundan stones, stars, and soft ghungroo details.',
-  'colorful-threads', 'round',
+  'colorful-threads', '/images/products/dahlia-1.jpg', 'round',
   '[{"name":"Fuchsia","hex":"#d9468f"},{"name":"Lime","hex":"#8fbf3a"},{"name":"Gold","hex":"#c4a574"}]'::jsonb,
   array['fuchsia','lime','pink','emerald','gold'], true, true, false
 ),
@@ -387,7 +387,7 @@ insert into public.products (
   'Deep green thread paired with delicate stones and metallic details.',
   'A rich emerald-inspired combination with soft metallic accents.',
   'Deep green silk wrap with gold accents.',
-  'stone-mirror', 'round',
+  'stone-mirror', null, 'round',
   '[{"name":"Emerald","hex":"#2d5a4a"},{"name":"Gold","hex":"#c4a574"},{"name":"Cream","hex":"#f0e6d8"}]'::jsonb,
   array['emerald','lime','gold','cream'], true, true, false
 ),
@@ -396,7 +396,7 @@ insert into public.products (
   'Soft lavender tones finished with delicate decorative stones.',
   'A soft lavender mood with gentle sparkle — perfect for lighter outfits.',
   'Lavender thread with soft silver sparkle and blush accents.',
-  'colorful-threads', 'round',
+  'colorful-threads', null, 'round',
   '[{"name":"Lavender","hex":"#a78bbf"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Blush","hex":"#d4a5a5"}]'::jsonb,
   array['lavender','purple','pink','silver'], true, true, false
 ),
@@ -405,7 +405,7 @@ insert into public.products (
   'A soft pink and gold combination designed for an elegant finish.',
   'Warm blush tones with muted gold accents — everyday to occasion.',
   'Blush silk with muted gold metallic accents.',
-  'modern-minimal', 'round',
+  'modern-minimal', null, 'round',
   '[{"name":"Blush","hex":"#d4a5a5"},{"name":"Gold","hex":"#c4a574"},{"name":"Cream","hex":"#f0e6d8"}]'::jsonb,
   array['pink','gold','cream','white'], true, true, false
 ),
@@ -414,7 +414,7 @@ insert into public.products (
   'Rich statement stack with bold stonework and metallic shine.',
   'A richer statement look for evenings and celebrations.',
   'Royal blue with gold and silver accents.',
-  'stone-mirror', 'round',
+  'stone-mirror', null, 'round',
   '[{"name":"Royal Blue","hex":"#1e3a8a"},{"name":"Gold","hex":"#c4a574"},{"name":"Silver","hex":"#c0c0c0"}]'::jsonb,
   array['royal-blue','navy','gold','silver'], true, true, true
 )

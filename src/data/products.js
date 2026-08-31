@@ -39,8 +39,15 @@ export const products = [
     name: 'OHONA',
     price: 350,
     variants: variantsWithPrices(350, 150, 100),
-    image: null,
-    images: [],
+    image: '/images/products/ohona-1.jpg',
+    images: [
+      '/images/products/ohona-1.jpg',
+      '/images/products/ohona-2.jpg',
+      '/images/products/ohona-3.jpg',
+      '/images/products/ohona-4.jpg',
+      '/images/products/ohona-5.jpg',
+      '/images/products/ohona-6.jpg',
+    ],
     shortDescription:
       'Smooth finishing thread work in a black and silver Y2K-inspired stack.',
     description:
@@ -64,8 +71,13 @@ export const products = [
     name: 'Charkona Kakan',
     price: 100,
     variants: variantsPerPiece(100),
-    image: null,
-    images: [],
+    image: '/images/products/charkona-1.jpg',
+    images: [
+      '/images/products/charkona-1.jpg',
+      '/images/products/charkona-2.jpg',
+      '/images/products/charkona-3.jpg',
+      '/images/products/charkona-4.jpg',
+    ],
     shortDescription:
       'Square silk-wrapped bangles with silver chumki and soothing jhunjhuri.',
     description:
@@ -91,8 +103,12 @@ export const products = [
     name: 'NEELA',
     price: 250,
     variants: variantsWithPrices(250, 100, 75),
-    image: null,
-    images: [],
+    image: '/images/products/neela-1.jpg',
+    images: [
+      '/images/products/neela-1.jpg',
+      '/images/products/neela-2.jpg',
+      '/images/products/neela-3.jpg',
+    ],
     shortDescription:
       'Vibrant navy kundan work with soft off-white contrast stacks.',
     description:
@@ -117,8 +133,13 @@ export const products = [
     name: 'DAHLIA',
     price: 250,
     variants: variantsWithPrices(250, 100, 75),
-    image: null,
-    images: [],
+    image: '/images/products/dahlia-1.jpg',
+    images: [
+      '/images/products/dahlia-1.jpg',
+      '/images/products/dahlia-2.jpg',
+      '/images/products/dahlia-3.jpg',
+      '/images/products/dahlia-4.jpg',
+    ],
     shortDescription:
       'Fuchsia and lime stacks with kundan sparkle and ghungroo accents.',
     description:

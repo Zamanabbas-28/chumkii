@@ -338,7 +338,7 @@ export default function CheckoutForm() {
               key={i.key}
               className="flex gap-3 border-b border-border-soft/70 pb-4 last:border-0"
             >
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-ivory">
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border-soft/60 bg-ivory p-1">
                 {i.kind === 'custom' ? (
                   <div className="h-full w-full scale-75">
                     <BanglePreview
@@ -351,6 +351,13 @@ export default function CheckoutForm() {
                       threadingId={i.threadingId}
                     />
                   </div>
+                ) : i.image ? (
+                  <img
+                    src={i.image}
+                    alt={`${i.name} bangle set by Chumki`}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
                 ) : (
                   <ProductPlaceholder
                     name={i.name}

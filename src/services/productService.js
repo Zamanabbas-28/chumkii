@@ -110,14 +110,37 @@ export function normalizeProduct(row) {
     variants.small?.availableSizes ||
     SIZES
 
+  const local = getLocalProductById(row.slug)
+  const dbImages = Array.isArray(row.images)
+    ? row.images
+    : typeof row.images === 'string'
+      ? (() => {
+          try {
+            const parsed = JSON.parse(row.images)
+            return Array.isArray(parsed) ? parsed : []
+          } catch {
+            return []
+          }
+        })()
+      : []
+
+  const images =
+    dbImages.length > 0
+      ? dbImages
+      : row.base_image
+        ? (local?.images?.length ? local.images : [row.base_image])
+        : (local?.images || (local?.image ? [local.image] : []))
+
+  const mainImage = row.base_image || local?.image || images[0] || null
+
   return {
     id: row.slug,
     dbId: row.id,
     name: row.name,
     price: unitPrice,
     variants,
-    image: row.base_image || null,
-    images: row.base_image ? [row.base_image] : [],
+    image: mainImage,
+    images,
     shortDescription: row.short_description || '',
     description: row.description || '',
     designDetails: row.design_details || row.description || '',

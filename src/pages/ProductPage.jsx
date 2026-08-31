@@ -175,6 +175,7 @@ export default function ProductPage() {
       threadingId: 'none',
       price: pricing.unit,
       quantity: qty,
+      image: product.image || product.images?.[0] || null,
     })
 
     setAdded(true)
@@ -400,11 +401,20 @@ export default function ProductPage() {
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {related.map((p) => (
                 <Link key={p.id} to={`/product/${p.id}`} className="group">
-                  <div className="aspect-square overflow-hidden rounded-2xl">
-                    <ProductPlaceholder
-                      name={p.name}
-                      colors={(p.colorPalette || []).map((c) => c.hex)}
-                    />
+                  <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-3">
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={`${p.name} bangle set by Chumki`}
+                        className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <ProductPlaceholder
+                        name={p.name}
+                        colors={(p.colorPalette || []).map((c) => c.hex)}
+                      />
+                    )}
                   </div>
                   <p className="mt-3 font-display text-xl group-hover:text-dusty-rose">
                     {p.name}

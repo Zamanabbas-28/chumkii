@@ -54,12 +54,12 @@ export default function InspirationGallery() {
               onClick={() => setActive(index)}
               className="mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl bg-ivory text-left shadow-sm transition hover:shadow-md"
             >
-              <div className="aspect-[4/5] w-full">
+              <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden bg-cream/30 p-3">
                 {g.image ? (
                   <img
                     src={g.image}
-                    alt={g.name}
-                    className="h-full w-full object-cover"
+                    alt={`${g.name} bangle set by Chumki`}
+                    className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 ) : (

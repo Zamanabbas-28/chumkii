@@ -17,12 +17,15 @@ export default function ProductCard({ product }) {
       transition={{ duration: 0.4 }}
       className="group flex flex-col"
     >
-      <Link to={`/product/${product.id}`} className="relative block aspect-[4/5] overflow-hidden rounded-2xl">
+      <Link
+        to={`/product/${product.id}`}
+        className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-3 sm:p-4"
+      >
         {product.image ? (
           <img
             src={product.image}
-            alt={product.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            alt={`${product.name} bangle set by Chumki`}
+            className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
             loading="lazy"
           />
         ) : (

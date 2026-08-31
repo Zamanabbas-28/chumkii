@@ -23,11 +23,20 @@ export default function RecentlyViewed() {
         <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {items.map((p) => (
             <Link key={p.id} to={`/product/${p.id}`} className="group">
-              <div className="aspect-square overflow-hidden rounded-2xl">
-                <ProductPlaceholder
-                  name={p.name}
-                  colors={(p.colorPalette || []).map((c) => c.hex)}
-                />
+              <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-border-soft/60 bg-cream/30 p-2.5">
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={`${p.name} bangle set by Chumki`}
+                    className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                ) : (
+                  <ProductPlaceholder
+                    name={p.name}
+                    colors={(p.colorPalette || []).map((c) => c.hex)}
+                  />
+                )}
               </div>
               <p className="mt-2 font-display text-lg group-hover:text-dusty-rose">
                 {p.name}

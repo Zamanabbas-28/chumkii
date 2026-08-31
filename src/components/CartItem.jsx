@@ -54,7 +54,7 @@ export default function CartItem({ item, onRemove, onUpdateQty }) {
 
   return (
     <li className="flex gap-3.5 rounded-2xl border border-border-soft bg-cream/40 p-3.5">
-      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ivory">
+      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border-soft/60 bg-ivory p-1.5">
         {item.kind === 'custom' ? (
           <div className="h-full w-full scale-75">
             <BanglePreview
@@ -67,6 +67,13 @@ export default function CartItem({ item, onRemove, onUpdateQty }) {
               threadingId={item.threadingId}
             />
           </div>
+        ) : item.image ? (
+          <img
+            src={item.image}
+            alt={`${item.name} bangle set by Chumki`}
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
         ) : (
           <ProductPlaceholder name={item.name} colors={colors} />
         )}
