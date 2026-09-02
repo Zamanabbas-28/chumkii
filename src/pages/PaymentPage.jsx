@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Check, Copy, Upload, X } from 'lucide-react'
+import { Check, Copy, ImageIcon, Camera, Upload, X } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CartDrawer from '../components/CartDrawer'
@@ -55,7 +55,8 @@ export default function PaymentPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
-  const fileInputRef = useRef(null)
+  const galleryInputRef = useRef(null)
+  const cameraInputRef = useRef(null)
   const submittingRef = useRef(false)
 
   const tokenFromQuery = params.get('token') || ''
@@ -280,6 +281,9 @@ export default function PaymentPage() {
     )
   }
 
+  const proofAccept =
+    'image/jpeg,image/png,image/webp,image/jpg,.jpg,.jpeg,.png,.webp,image/*'
+
   const items = order.items || []
 
   return (
@@ -474,7 +478,7 @@ export default function PaymentPage() {
                 <span className="font-medium text-ink">{PAYMENT_CONFIG.payToNumber}</span>.
               </li>
               <li>Take a screenshot of your successful transaction.</li>
-              <li>Upload the screenshot below.</li>
+              <li>Upload it below — choose from your gallery or take a photo.</li>
               <li>Submit your payment for verification.</li>
               <li>
                 Once verified, we&apos;ll begin preparing your order with care ✨
@@ -492,40 +496,62 @@ export default function PaymentPage() {
             </p>
 
             {!previewUrl ? (
-              <label
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setDragOver(true)
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  setDragOver(false)
-                  const f = e.dataTransfer.files?.[0]
-                  if (f) pickFile(f)
-                }}
-                className={`mt-4 flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-3xl border border-dashed px-4 py-8 text-center transition ${
-                  dragOver
-                    ? 'border-gold bg-cream'
-                    : 'border-border-soft bg-cream/30 hover:border-gold/40'
-                }`}
-              >
-                <Upload className="mb-2 text-ink-soft" size={28} />
-                <span className="text-sm font-semibold text-ink">
-                  Drop screenshot here, or tap to choose
-                </span>
-                <span className="mt-1 text-xs text-ink-soft">
-                  Camera or gallery on mobile
-                </span>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/jpg,.jpg,.jpeg,.png,.webp"
-                  capture="environment"
-                  className="sr-only"
-                  onChange={onFileInput}
-                />
-              </label>
+              <div className="mt-4 space-y-4">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => galleryInputRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      galleryInputRef.current?.click()
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    setDragOver(true)
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    setDragOver(false)
+                    const f = e.dataTransfer.files?.[0]
+                    if (f) pickFile(f)
+                  }}
+                  className={`hidden min-h-40 cursor-pointer flex-col items-center justify-center rounded-3xl border border-dashed px-4 py-8 text-center transition sm:flex ${
+                    dragOver
+                      ? 'border-gold bg-cream'
+                      : 'border-border-soft bg-cream/30 hover:border-gold/40'
+                  }`}
+                >
+                  <Upload className="mb-2 text-ink-soft" size={28} />
+                  <span className="text-sm font-semibold text-ink">
+                    Drop screenshot here, or click to choose
+                  </span>
+                  <span className="mt-1 text-xs text-ink-soft">
+                    JPG, PNG, or WEBP — up to 5 MB
+                  </span>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="inline-flex min-h-14 w-full items-center justify-center gap-2.5 rounded-2xl border border-border-soft bg-cream/40 px-4 py-4 text-sm font-semibold text-ink transition hover:border-gold/40 active:scale-[0.99]"
+                  >
+                    <ImageIcon size={20} className="shrink-0 text-gold" />
+                    Choose from gallery
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="inline-flex min-h-14 w-full items-center justify-center gap-2.5 rounded-2xl border border-border-soft bg-cream/40 px-4 py-4 text-sm font-semibold text-ink transition hover:border-gold/40 active:scale-[0.99]"
+                  >
+                    <Camera size={20} className="shrink-0 text-gold" />
+                    Take a photo
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="mt-4 overflow-hidden rounded-3xl border border-border-soft bg-cream/30">
                 <img
@@ -536,10 +562,17 @@ export default function PaymentPage() {
                 <div className="flex flex-wrap gap-2 border-t border-border-soft p-3">
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex min-h-11 items-center rounded-full border border-border-soft bg-ivory px-4 text-sm font-semibold"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border-soft bg-ivory px-4 text-sm font-semibold"
                   >
-                    Replace
+                    <ImageIcon size={16} /> Gallery
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border-soft bg-ivory px-4 text-sm font-semibold"
+                  >
+                    <Camera size={16} /> Camera
                   </button>
                   <button
                     type="button"
@@ -551,16 +584,25 @@ export default function PaymentPage() {
                   >
                     <X size={16} /> Remove
                   </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/jpg,.jpg,.jpeg,.png,.webp"
-                    className="sr-only"
-                    onChange={onFileInput}
-                  />
                 </div>
               </div>
             )}
+
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept={proofAccept}
+              className="sr-only"
+              onChange={onFileInput}
+            />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="sr-only"
+              onChange={onFileInput}
+            />
             {errors.file && (
               <p className="mt-2 text-sm text-dusty-rose">{errors.file}</p>
             )}

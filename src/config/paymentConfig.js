@@ -54,8 +54,13 @@ export function isAcceptedProofFile(file) {
   if (file.size > PAYMENT_CONFIG.maxProofBytes) return false
   const mime = (file.type || '').toLowerCase()
   if (PAYMENT_CONFIG.acceptedMimeTypes.includes(mime)) return true
+  if (mime.startsWith('image/')) return true
   const name = (file.name || '').toLowerCase()
-  return PAYMENT_CONFIG.acceptedExtensions.some((ext) => name.endsWith(ext))
+  if (PAYMENT_CONFIG.acceptedExtensions.some((ext) => name.endsWith(ext))) {
+    return true
+  }
+  // Some mobile browsers return an empty type for gallery picks.
+  return !mime && file.size > 0
 }
 
 export function proofFileError(file) {
@@ -63,14 +68,6 @@ export function proofFileError(file) {
   if (file.size > PAYMENT_CONFIG.maxProofBytes) {
     return 'That image is a bit large — please use a file under 5 MB.'
   }
-  const mime = (file.type || '').toLowerCase()
-  const name = (file.name || '').toLowerCase()
-  const okMime = PAYMENT_CONFIG.acceptedMimeTypes.includes(mime)
-  const okExt = PAYMENT_CONFIG.acceptedExtensions.some((ext) =>
-    name.endsWith(ext),
-  )
-  if (!okMime && !okExt) {
-    return 'Please upload a JPG, PNG, or WEBP screenshot.'
-  }
-  return null
+  if (isAcceptedProofFile(file)) return null
+  return 'Please upload a JPG, PNG, or WEBP screenshot.'
 }

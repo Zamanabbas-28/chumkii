@@ -40,7 +40,22 @@ function extFromFile(file) {
   const mime = (file.type || '').toLowerCase()
   if (mime.includes('png')) return 'png'
   if (mime.includes('webp')) return 'webp'
+  if (mime.includes('jpeg') || mime.includes('jpg')) return 'jpg'
   return 'jpg'
+}
+
+function contentTypeForFile(file, ext) {
+  const mime = (file.type || '').toLowerCase()
+  if (mime.startsWith('image/')) {
+    if (mime === 'image/jpg') return 'image/jpeg'
+    return mime
+  }
+  const map = {
+    png: 'image/png',
+    webp: 'image/webp',
+    jpg: 'image/jpeg',
+  }
+  return map[ext] || 'image/jpeg'
 }
 
 /**
@@ -108,7 +123,7 @@ export async function uploadPaymentProof({ orderId, file }) {
       .upload(path, file, {
         cacheControl: '3600',
         upsert: false,
-        contentType: file.type || `image/${ext}`,
+        contentType: contentTypeForFile(file, ext),
       })
 
     if (error) {
