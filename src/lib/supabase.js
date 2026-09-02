@@ -1,18 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/supabasePublic'
 
-const url = import.meta.env.VITE_SUPABASE_URL
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!url || !anonKey) {
-  console.warn(
-    'Supabase env vars missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env',
-  )
-}
+const url = import.meta.env.VITE_SUPABASE_URL || SUPABASE_URL
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY
 
 /** Shared Supabase browser client (anon key only — never service_role). */
-export const supabase =
-  url && anonKey ? createClient(url, anonKey) : null
+export const supabase = createClient(url, anonKey)
 
 export function isSupabaseConfigured() {
-  return Boolean(supabase)
+  return Boolean(url && anonKey)
 }
