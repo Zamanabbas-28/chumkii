@@ -223,10 +223,10 @@ export const products = [
     price: 600,
     variants: variantsWithBigMediumSmall(600, 100, 75, 50),
     threeColorSections: true,
-    image: '/images/products/zaria-1.jpg',
+    image: '/images/products/zaria-2.jpg',
     images: [
-      '/images/products/zaria-1.jpg',
       '/images/products/zaria-2.jpg',
+      '/images/products/zaria-1.jpg',
       '/images/products/zaria-3.jpg',
       '/images/products/zaria-4.jpg',
     ],

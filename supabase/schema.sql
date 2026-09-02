@@ -396,7 +396,7 @@ insert into public.products (
   'Magenta, lime, and maroon silk stack with kundan florals and pearl accents.',
   'A festive magenta and lime combination finished with smooth thread work, green kundan stones, pearl-lined spacers, and gold-toned settings — made for celebrations and special occasions.',
   'Thick magenta statement bangles with floral kundan centres, lime green medium bands with teardrop stones, and maroon pearl companion bangles. Handmade in Sylhet.',
-  'stone-mirror', '/images/products/zaria-1.jpg', 'round',
+  'stone-mirror', '/images/products/zaria-2.jpg', 'round',
   '[{"name":"Magenta","hex":"#c2185b"},{"name":"Lime Green","hex":"#8fbf3a"},{"name":"Maroon","hex":"#7a2048"}]'::jsonb,
   array['fuchsia','pink','lime','maroon','red','gold','cream'], true, true, true
 ),
