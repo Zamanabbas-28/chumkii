@@ -143,7 +143,7 @@ export default function ProductGallery({ product }) {
 
       {/* Thumbnail Selector Strip */}
       {images.length > 1 && (
-        <div className="flex items-center gap-3 overflow-x-auto pb-1 no-scrollbar">
+        <div className="-mx-4 flex items-center gap-2.5 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:gap-3 sm:px-0">
           {images.map((src, i) => (
             <button
               key={src + i}
@@ -205,11 +205,11 @@ export default function ProductGallery({ product }) {
                 </button>
 
                 {/* Lightbox Image with Contain */}
-                <div className="relative flex max-h-[75svh] w-full items-center justify-center">
+                <div className="relative flex max-h-[85svh] w-full items-center justify-center sm:max-h-[75svh]">
                   <img
                     src={images[index]}
                     alt={altText}
-                    className="max-h-[75svh] w-auto max-w-full select-none object-contain"
+                    className="max-h-[85svh] w-auto max-w-full select-none object-contain sm:max-h-[75svh]"
                   />
                 </div>
 

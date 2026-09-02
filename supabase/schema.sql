@@ -51,7 +51,7 @@ create trigger products_set_updated_at
 create table if not exists public.product_variants (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references public.products (id) on delete cascade,
-  variant_type text not null check (variant_type in ('full_stack', 'big', 'small')),
+  variant_type text not null check (variant_type in ('full_stack', 'big', 'medium', 'small')),
   name text not null,
   description text,
   price numeric(12, 2) not null check (price >= 0),
@@ -383,6 +383,24 @@ insert into public.products (
   array['fuchsia','lime','pink','emerald','gold'], true, true, true
 ),
 (
+  'siya', 'SIYA',
+  'Black silk stack with silver mirror work, ghungroo bells, and pearl accents.',
+  'A striking black and silver combination finished with smooth thread work, geometric mirror pieces, and soft ghungroo details — made for everyday and festive wear.',
+  'Deep black silk wrap with silver wire bands, shisha mirror triangles and diamonds, pearl clusters, and dangling ghungroo accents. Handmade in Sylhet.',
+  'stone-mirror', '/images/products/siya-1.jpg', 'round',
+  '[{"name":"Black","hex":"#1a1a1a"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Pearl","hex":"#f5f0e8"}]'::jsonb,
+  array['black','silver','white','cream','gold'], true, true, true
+),
+(
+  'zaria', 'ZARIA',
+  'Magenta, lime, and maroon silk stack with kundan florals and pearl accents.',
+  'A festive magenta and lime combination finished with smooth thread work, green kundan stones, pearl-lined spacers, and gold-toned settings — made for celebrations and special occasions.',
+  'Thick magenta statement bangles with floral kundan centres, lime green medium bands with teardrop stones, and maroon pearl companion bangles. Handmade in Sylhet.',
+  'stone-mirror', '/images/products/zaria-1.jpg', 'round',
+  '[{"name":"Magenta","hex":"#c2185b"},{"name":"Lime Green","hex":"#8fbf3a"},{"name":"Maroon","hex":"#7a2048"}]'::jsonb,
+  array['fuchsia','pink','lime','maroon','red','gold','cream'], true, true, true
+),
+(
   'emerald-bloom', 'Emerald Bloom',
   'Deep green thread paired with delicate stones and metallic details.',
   'A rich emerald-inspired combination with soft metallic accents.',
@@ -444,6 +462,8 @@ cross join lateral (
         when 'charkona-kakan' then 1100
         when 'neela' then 1500
         when 'dahlia' then 1400
+        when 'siya' then 250
+        when 'zaria' then 600
         when 'emerald-bloom' then 1300
         when 'lavender-spark' then 1250
         when 'blush-gold' then 1350
@@ -451,34 +471,55 @@ cross join lateral (
         else 1200
       end::numeric),
     ('big', 'Big Bangle', 'Purchase only the larger statement bangle.',
-      round(
-        case p.slug
-          when 'ohona' then 1200
-          when 'charkona-kakan' then 1100
-          when 'neela' then 1500
-          when 'dahlia' then 1400
-          when 'emerald-bloom' then 1300
-          when 'lavender-spark' then 1250
-          when 'blush-gold' then 1350
-          when 'royal-muse' then 1600
-          else 1200
-        end * 0.45
-      )::numeric),
+      case p.slug
+        when 'siya' then 100
+        when 'zaria' then 100
+        else round(
+          case p.slug
+            when 'ohona' then 1200
+            when 'charkona-kakan' then 1100
+            when 'neela' then 1500
+            when 'dahlia' then 1400
+            when 'emerald-bloom' then 1300
+            when 'lavender-spark' then 1250
+            when 'blush-gold' then 1350
+            when 'royal-muse' then 1600
+            else 1200
+          end * 0.45
+        )
+      end::numeric),
     ('small', 'Small Bangle', 'Purchase only the smaller matching bangle.',
-      round(
-        case p.slug
-          when 'ohona' then 1200
-          when 'charkona-kakan' then 1100
-          when 'neela' then 1500
-          when 'dahlia' then 1400
-          when 'emerald-bloom' then 1300
-          when 'lavender-spark' then 1250
-          when 'blush-gold' then 1350
-          when 'royal-muse' then 1600
-          else 1200
-        end * 0.25
-      )::numeric)
+      case p.slug
+        when 'siya' then 75
+        when 'zaria' then 50
+        else round(
+          case p.slug
+            when 'ohona' then 1200
+            when 'charkona-kakan' then 1100
+            when 'neela' then 1500
+            when 'dahlia' then 1400
+            when 'emerald-bloom' then 1300
+            when 'lavender-spark' then 1250
+            when 'blush-gold' then 1350
+            when 'royal-muse' then 1600
+            else 1200
+          end * 0.25
+        )
+      end::numeric)
 ) as v(variant_type, name, description, price)
+on conflict (product_id, variant_type) do update set
+  name = excluded.name,
+  description = excluded.description,
+  price = excluded.price,
+  available_sizes = excluded.available_sizes,
+  is_available = excluded.is_available,
+  updated_at = now();
+
+-- Medium bangle variant (Zaria only)
+insert into public.product_variants (product_id, variant_type, name, description, price, available_sizes, is_available)
+select p.id, 'medium', 'Medium Bangle', 'Purchase only the medium-width bangle.', 75, array['2.2','2.4','2.6','2.8'], true
+from public.products p
+where p.slug = 'zaria'
 on conflict (product_id, variant_type) do update set
   name = excluded.name,
   description = excluded.description,

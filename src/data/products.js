@@ -21,6 +21,32 @@ function variantsWithPrices(stackPrice, bigPrice, smallPrice) {
   }
 }
 
+/** Full Stack + Big / Medium / Small (e.g. Zaria). */
+function variantsWithBigMediumSmall(stackPrice, bigPrice, mediumPrice, smallPrice) {
+  return {
+    stack: {
+      label: 'Full Stack',
+      price: stackPrice,
+      description: 'Get the complete matching bangle set.',
+    },
+    big: {
+      label: 'Big Bangle',
+      price: bigPrice,
+      description: 'Purchase only the larger statement bangles.',
+    },
+    medium: {
+      label: 'Medium Bangle',
+      price: mediumPrice,
+      description: 'Purchase only the medium-width bangles.',
+    },
+    small: {
+      label: 'Small Bangle',
+      price: smallPrice,
+      description: 'Purchase only the smaller companion bangles.',
+    },
+  }
+}
+
 /** Single per-piece product (no Full Stack / Big / Small choice).
  * Uses frontend key `piece` (maps to DB `small`). */
 function variantsPerPiece(piecePrice) {
@@ -155,6 +181,70 @@ export const products = [
     customizable: true,
     category: 'colorful-threads',
     availableColors: ['fuchsia', 'lime', 'pink', 'emerald', 'gold'],
+    shape: 'round',
+    inStock: true,
+    featured: true,
+  },
+  {
+    id: 'siya',
+    name: 'SIYA',
+    price: 250,
+    variants: variantsWithPrices(250, 100, 75),
+    image: '/images/products/siya-1.jpg',
+    images: [
+      '/images/products/siya-1.jpg',
+      '/images/products/siya-2.jpg',
+      '/images/products/siya-3.jpg',
+      '/images/products/siya-4.jpg',
+      '/images/products/siya-5.jpg',
+    ],
+    shortDescription:
+      'Black silk stack with silver mirror work, ghungroo bells, and pearl accents.',
+    description:
+      'A striking black and silver combination finished with smooth thread work, geometric mirror pieces, and soft ghungroo details — made for everyday and festive wear.',
+    designDetails:
+      'Deep black silk wrap with silver wire bands, shisha mirror triangles and diamonds, pearl clusters, and dangling ghungroo accents. Handmade in Sylhet.',
+    sizes: SIZES,
+    colorPalette: [
+      { name: 'Black', hex: '#1a1a1a' },
+      { name: 'Silver', hex: '#c0c0c0' },
+      { name: 'Pearl', hex: '#f5f0e8' },
+    ],
+    customizable: true,
+    category: 'stone-mirror',
+    availableColors: ['black', 'silver', 'white', 'cream', 'gold'],
+    shape: 'round',
+    inStock: true,
+    featured: true,
+  },
+  {
+    id: 'zaria',
+    name: 'ZARIA',
+    price: 600,
+    variants: variantsWithBigMediumSmall(600, 100, 75, 50),
+    threeColorSections: true,
+    image: '/images/products/zaria-1.jpg',
+    images: [
+      '/images/products/zaria-1.jpg',
+      '/images/products/zaria-2.jpg',
+      '/images/products/zaria-3.jpg',
+      '/images/products/zaria-4.jpg',
+    ],
+    shortDescription:
+      'Magenta, lime, and maroon silk stack with kundan florals and pearl accents.',
+    description:
+      'A festive magenta and lime combination finished with smooth thread work, green kundan stones, pearl-lined spacers, and gold-toned settings — made for celebrations and special occasions.',
+    designDetails:
+      'Thick magenta statement bangles with floral kundan centres, lime green medium bands with teardrop stones, and maroon pearl companion bangles. Handmade in Sylhet.',
+    sizes: SIZES,
+    colorPalette: [
+      { name: 'Magenta', hex: '#c2185b' },
+      { name: 'Lime Green', hex: '#8fbf3a' },
+      { name: 'Maroon', hex: '#7a2048' },
+    ],
+    customizable: true,
+    category: 'stone-mirror',
+    availableColors: ['fuchsia', 'pink', 'lime', 'maroon', 'red', 'gold', 'cream'],
     shape: 'round',
     inStock: true,
     featured: true,

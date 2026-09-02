@@ -50,6 +50,10 @@ h1, h2, h3, h4, .font-display {
   scrollbar-width: none;
 }
 
+.safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -47,6 +47,7 @@ export default function ProductPage() {
   const [variantId, setVariantId] = useState('stack')
   const [size, setSize] = useState('')
   const [bigColorPref, setBigColorPref] = useState('original')
+  const [mediumColorPref, setMediumColorPref] = useState('original')
   const [smallColorPref, setSmallColorPref] = useState('original')
   const [pieceColorPref, setPieceColorPref] = useState('original')
   const [qty, setQty] = useState(1)
@@ -61,6 +62,7 @@ export default function ProductPage() {
     setVariantId(initialVariant)
     setSize('')
     setBigColorPref('original')
+    setMediumColorPref('original')
     setSmallColorPref('original')
     setPieceColorPref('original')
     setQty(1)
@@ -97,8 +99,12 @@ export default function ProductPage() {
 
   const isStack = variantId === 'stack'
   const isBig = variantId === 'big'
+  const isMedium = variantId === 'medium'
   const isSmall = variantId === 'small'
   const isPiece = variantId === 'piece'
+  const threeColorSections = Boolean(
+    product?.threeColorSections || product?.variants?.medium,
+  )
 
   const canAdd = Boolean(product && variantId && size)
 
@@ -124,6 +130,7 @@ export default function ProductPage() {
     if (!canAdd) return
 
     const bigColorObj = COLORS.find((c) => c.id === bigColorPref)
+    const mediumColorObj = COLORS.find((c) => c.id === mediumColorPref)
     const smallColorObj = COLORS.find((c) => c.id === smallColorPref)
     const pieceColorObj = COLORS.find((c) => c.id === pieceColorPref)
 
@@ -131,6 +138,11 @@ export default function ProductPage() {
       bigColorPref === 'original' || !bigColorPref
         ? 'Keep Original Color'
         : bigColorObj?.name || bigColorPref
+
+    const mediumColorLabel =
+      mediumColorPref === 'original' || !mediumColorPref
+        ? 'Keep Original Color'
+        : mediumColorObj?.name || mediumColorPref
 
     const smallColorLabel =
       smallColorPref === 'original' || !smallColorPref
@@ -143,9 +155,15 @@ export default function ProductPage() {
         : pieceColorObj?.name || pieceColorPref
 
     const isOriginal = isStack
-      ? bigColorPref === 'original' && smallColorPref === 'original'
+      ? threeColorSections
+        ? bigColorPref === 'original' &&
+          mediumColorPref === 'original' &&
+          smallColorPref === 'original'
+        : bigColorPref === 'original' && smallColorPref === 'original'
       : isBig
       ? bigColorPref === 'original'
+      : isMedium
+      ? mediumColorPref === 'original'
       : isSmall
       ? smallColorPref === 'original'
       : pieceColorPref === 'original'
@@ -158,9 +176,11 @@ export default function ProductPage() {
       variantLabel: currentVariant?.label || variantId,
       size,
       bigColorPreference: isStack || isBig ? bigColorPref : null,
+      mediumColorPreference: isStack || isMedium ? mediumColorPref : null,
       smallColorPreference: isStack || isSmall ? smallColorPref : null,
       pieceColorPreference: isPiece ? pieceColorPref : null,
       bigColorLabel: isStack || isBig ? bigColorLabel : null,
+      mediumColorLabel: isStack || isMedium ? mediumColorLabel : null,
       smallColorLabel: isStack || isSmall ? smallColorLabel : null,
       pieceColorLabel: isPiece ? pieceColorLabel : null,
       isOriginalColor: isOriginal,
@@ -169,9 +189,11 @@ export default function ProductPage() {
           ? bigColorObj.hex
           : product.colorPalette?.[0]?.hex || '#c4a574',
       accentHex:
-        (isSmall || isStack) && smallColorObj
-          ? smallColorObj.hex
-          : product.colorPalette?.[1]?.hex || product.colorPalette?.[0]?.hex || '#d4a5a5',
+        (isMedium || isStack) && mediumColorObj
+          ? mediumColorObj.hex
+          : (isSmall || isStack) && smallColorObj
+            ? smallColorObj.hex
+            : product.colorPalette?.[1]?.hex || product.colorPalette?.[0]?.hex || '#d4a5a5',
       threadingId: 'none',
       price: pricing.unit,
       quantity: qty,
@@ -185,7 +207,7 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen bg-ivory text-ink">
       <Navbar solid />
-      <main className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-6xl px-4 pb-32 pt-24 sm:px-6 sm:pb-28 sm:pt-28 lg:px-8">
         <Link to="/#designs" className="text-sm text-ink-soft hover:text-ink">
           ← Shop collection
         </Link>
@@ -198,7 +220,7 @@ export default function ProductPage() {
           <div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h1 className="font-display text-4xl text-ink sm:text-5xl">
+                <h1 className="font-display text-3xl text-ink sm:text-4xl md:text-5xl">
                   {product.name}
                 </h1>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">
@@ -235,8 +257,47 @@ export default function ProductPage() {
                   </span>
                 </div>
 
-                {/* Full Stack: Big and Small Preferences */}
-                {isStack && (
+                {/* Full Stack: color preferences per bangle section */}
+                {isStack && threeColorSections && (
+                  <div className="space-y-5">
+                    <ColorPreferenceSelector
+                      label="Big Bangle Color"
+                      description="Choose silk thread color for the thick magenta statement bangles."
+                      colorOptions={availableColorList}
+                      originalPalette={product.colorPalette?.slice(0, 1)}
+                      value={bigColorPref}
+                      onChange={setBigColorPref}
+                      productName={product.name}
+                      targetPart="Big Bangles"
+                    />
+
+                    <ColorPreferenceSelector
+                      label="Medium Bangle Color"
+                      description="Choose silk thread color for the lime green medium bangles."
+                      colorOptions={availableColorList}
+                      originalPalette={product.colorPalette?.slice(1, 2)}
+                      value={mediumColorPref}
+                      onChange={setMediumColorPref}
+                      productName={product.name}
+                      targetPart="Medium Bangles"
+                    />
+
+                    <ColorPreferenceSelector
+                      label="Small Bangle Color"
+                      description="Choose silk thread color for the maroon and pearl companion bangles."
+                      colorOptions={availableColorList}
+                      originalPalette={product.colorPalette?.slice(2, 3)}
+                      value={smallColorPref}
+                      onChange={setSmallColorPref}
+                      productName={product.name}
+                      targetPart="Small Bangles"
+                      showDmPrompt={true}
+                    />
+                  </div>
+                )}
+
+                {/* Full Stack: standard Big + Small preferences */}
+                {isStack && !threeColorSections && (
                   <div className="space-y-5">
                     <ColorPreferenceSelector
                       label="Big Bangle Color"
@@ -261,6 +322,21 @@ export default function ProductPage() {
                       showDmPrompt={true}
                     />
                   </div>
+                )}
+
+                {/* Medium Bangle Only */}
+                {isMedium && (
+                  <ColorPreferenceSelector
+                    label="Medium Bangle Color Preference"
+                    description="Choose silk thread color preference for your medium bangles."
+                    colorOptions={availableColorList}
+                    originalPalette={product.colorPalette?.slice(1, 2)}
+                    value={mediumColorPref}
+                    onChange={setMediumColorPref}
+                    productName={product.name}
+                    targetPart="Medium Bangles"
+                    showDmPrompt={true}
+                  />
                 )}
 
                 {/* Big Bangle Only */}
@@ -398,7 +474,7 @@ export default function ProductPage() {
         {related.filter((p) => p.image).length > 0 && (
           <section className="mt-16">
             <h2 className="font-display text-3xl text-ink">Related designs</h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
               {related
                 .filter((p) => p.image)
                 .map((p) => (
@@ -425,7 +501,7 @@ export default function ProductPage() {
       </main>
 
       {/* Sticky Mobile Add To Cart Bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border-soft bg-ivory/95 p-3 backdrop-blur sm:hidden">
+      <div className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-border-soft bg-ivory/95 px-3 pt-3 backdrop-blur sm:hidden">
         <div className="mx-auto flex max-w-lg items-center gap-3">
           <div>
             <p className="text-[11px] text-ink-soft">Total</p>

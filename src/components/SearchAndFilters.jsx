@@ -22,7 +22,7 @@ export default function SearchAndFilters({
         />
       </label>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
         {[
           ['all', 'All shapes'],
           ['round', 'Round'],
@@ -32,7 +32,7 @@ export default function SearchAndFilters({
             key={id}
             type="button"
             onClick={() => onFiltersChange({ ...filters, shape: id })}
-            className={`min-h-10 rounded-full px-3 text-xs font-semibold transition ${
+            className={`min-h-10 shrink-0 rounded-full px-3 text-xs font-semibold transition ${
               filters.shape === id
                 ? 'bg-ink text-ivory'
                 : 'border border-border-soft bg-ivory text-ink-soft hover:border-gold/40'
@@ -49,7 +49,7 @@ export default function SearchAndFilters({
               featuredOnly: !filters.featuredOnly,
             })
           }
-          className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold transition ${
+          className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold transition ${
             filters.featuredOnly
               ? 'bg-ink text-ivory'
               : 'border border-border-soft bg-ivory text-ink-soft hover:border-gold/40'

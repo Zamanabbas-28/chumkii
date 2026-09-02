@@ -36,13 +36,15 @@ function itemLine(item) {
     parts.push('Original Colors')
   } else {
     const hasBig = custom.bigColorPreference && custom.bigColorPreference !== 'original'
+    const hasMedium = custom.mediumColorPreference && custom.mediumColorPreference !== 'original'
     const hasSmall = custom.smallColorPreference && custom.smallColorPreference !== 'original'
     const hasPiece = custom.pieceColorPreference && custom.pieceColorPreference !== 'original'
 
     if (hasBig) parts.push(`Big: ${custom.bigColorLabel || custom.bigColorPreference}`)
+    if (hasMedium) parts.push(`Medium: ${custom.mediumColorLabel || custom.mediumColorPreference}`)
     if (hasSmall) parts.push(`Small: ${custom.smallColorLabel || custom.smallColorPreference}`)
     if (hasPiece) parts.push(`Color: ${custom.pieceColorLabel || custom.pieceColorPreference}`)
-    if (!hasBig && !hasSmall && !hasPiece && custom.color) parts.push(custom.color)
+    if (!hasBig && !hasMedium && !hasSmall && !hasPiece && custom.color) parts.push(custom.color)
   }
 
   return parts.filter(Boolean).join(' · ')

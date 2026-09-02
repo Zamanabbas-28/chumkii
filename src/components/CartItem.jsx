@@ -29,8 +29,15 @@ export default function CartItem({ item, onRemove, onUpdateQty }) {
     }
 
     const hasBigPref = item.bigColorPreference && item.bigColorPreference !== 'original'
+    const hasMediumPref = item.mediumColorPreference && item.mediumColorPreference !== 'original'
     const hasSmallPref = item.smallColorPreference && item.smallColorPreference !== 'original'
     const hasPiecePref = item.pieceColorPreference && item.pieceColorPreference !== 'original'
+
+    const prefParts = []
+    if (hasBigPref) prefParts.push(`Big: ${item.bigColorLabel || item.bigColorPreference}`)
+    if (hasMediumPref) prefParts.push(`Medium: ${item.mediumColorLabel || item.mediumColorPreference}`)
+    if (hasSmallPref) prefParts.push(`Small: ${item.smallColorLabel || item.smallColorPreference}`)
+    if (hasPiecePref) prefParts.push(`Color: ${item.pieceColorLabel || item.pieceColorPreference}`)
 
     return (
       <>
@@ -41,11 +48,7 @@ export default function CartItem({ item, onRemove, onUpdateQty }) {
           <span className="text-ink-soft">Original Colors</span>
         ) : (
           <span className="text-ink-soft">
-            {hasBigPref && <span>Big: {item.bigColorLabel || item.bigColorPreference}</span>}
-            {hasBigPref && hasSmallPref && <span> · </span>}
-            {hasSmallPref && <span>Small: {item.smallColorLabel || item.smallColorPreference}</span>}
-            {hasPiecePref && <span>Color: {item.pieceColorLabel || item.pieceColorPreference}</span>}
-            {!hasBigPref && !hasSmallPref && !hasPiecePref && (item.color || 'Original Colors')}
+            {prefParts.length > 0 ? prefParts.join(' · ') : (item.color || 'Original Colors')}
           </span>
         )}
       </>

@@ -16,13 +16,13 @@ export default function Hero() {
         aria-hidden
       />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-8 sm:px-6 sm:pb-20 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:pb-24 lg:pt-12">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 pb-12 pt-6 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-8 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:pb-24 lg:pt-12">
         <div>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
-            className="font-display text-5xl text-ink sm:text-6xl"
+            className="font-display text-4xl text-ink sm:text-5xl md:text-6xl"
           >
             Chumki
             <span className="text-gold">✦</span>
@@ -32,7 +32,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.06 }}
-            className="mt-3 max-w-lg font-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl"
+            className="mt-3 max-w-lg font-display text-2xl leading-tight text-ink sm:text-4xl md:text-5xl"
           >
             Handmade bangles you can shop — Full Stack, Big, or Small — with gentle color preferences.
           </motion.h1>

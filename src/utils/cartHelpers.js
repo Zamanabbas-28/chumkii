@@ -23,6 +23,7 @@ export function buildCartKey(item) {
     item.variantId || '',
     item.size || '',
     item.bigColorPreference || item.bigColor || 'original',
+    item.mediumColorPreference || item.mediumColor || 'original',
     item.smallColorPreference || item.smallColor || 'original',
     item.pieceColorPreference || item.pieceColor || 'original',
     item.color || '',
@@ -56,6 +57,12 @@ export function formatColorPreferences(item) {
     parts.push(`Big: ${custom.bigColorLabel}`)
   } else if (custom.bigColorPreference && custom.bigColorPreference !== 'original') {
     parts.push(`Big: ${custom.bigColorPreference}`)
+  }
+
+  if (custom.mediumColorLabel && custom.mediumColorLabel !== 'Keep Original Color') {
+    parts.push(`Medium: ${custom.mediumColorLabel}`)
+  } else if (custom.mediumColorPreference && custom.mediumColorPreference !== 'original') {
+    parts.push(`Medium: ${custom.mediumColorPreference}`)
   }
 
   if (custom.smallColorLabel && custom.smallColorLabel !== 'Keep Original Color') {

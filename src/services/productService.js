@@ -10,6 +10,7 @@ import { SIZES } from '../data/colors'
 export const VARIANT_TO_DB = {
   stack: 'full_stack',
   big: 'big',
+  medium: 'medium',
   small: 'small',
   piece: 'small', // per-piece products (e.g. Charkona)
 }
@@ -18,6 +19,7 @@ export const VARIANT_TO_DB = {
 export const DB_TO_VARIANT = {
   full_stack: 'stack',
   big: 'big',
+  medium: 'medium',
   small: 'small',
 }
 
@@ -33,6 +35,10 @@ const VARIANT_META = {
   small: {
     label: 'Small Bangle',
     description: 'Purchase only the smaller matching bangle.',
+  },
+  medium: {
+    label: 'Medium Bangle',
+    description: 'Purchase only the medium-width bangle.',
   },
   piece: {
     label: 'Per piece',
@@ -152,6 +158,7 @@ export function normalizeProduct(row) {
     shape: row.shape || 'round',
     inStock: true,
     featured: Boolean(row.is_featured),
+    threeColorSections: Boolean(local?.threeColorSections),
   }
 }
 
@@ -194,12 +201,35 @@ function isValidProductImage(p) {
   )
 }
 
+function isStorefrontReady(p) {
+  return (
+    p &&
+    isValidProductImage(p) &&
+    Object.keys(p.variants || {}).length > 0
+  )
+}
+
+/** Include local photographed products not yet synced to Supabase (e.g. new launches). */
+function mergeLocalPhotographedProducts(dbProducts) {
+  const byId = new Map((dbProducts || []).map((p) => [p.id, p]))
+
+  for (const local of localProducts) {
+    if (!byId.has(local.id) && isStorefrontReady(local)) {
+      byId.set(local.id, { ...local, fromFallback: true })
+    }
+  }
+
+  return Array.from(byId.values()).sort((a, b) =>
+    (a.name || '').localeCompare(b.name || ''),
+  )
+}
+
 function withLocalFallback(reason) {
   if (reason) {
     console.warn('[productService] using local catalog fallback:', reason)
   }
   const fallbackList = localProducts
-    .filter(isValidProductImage)
+    .filter(isStorefrontReady)
     .map((p) => ({ ...p, fromFallback: true }))
 
   return {
@@ -242,7 +272,11 @@ export async function fetchProducts() {
       return withLocalFallback('No active products in database')
     }
 
-    return { products: list, fromFallback: false, error: null }
+    return {
+      products: mergeLocalPhotographedProducts(list),
+      fromFallback: false,
+      error: null,
+    }
   } catch (err) {
     return withLocalFallback(err?.message || 'Fetch failed')
   }
