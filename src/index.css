@@ -21,6 +21,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -31,6 +33,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 h1, h2, h3, h4, .font-display {

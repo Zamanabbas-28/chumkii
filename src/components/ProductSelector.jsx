@@ -12,7 +12,7 @@ export default function ProductSelector({ variants, value, onChange }) {
   return (
     <div>
       <p className="mb-3 text-sm font-semibold text-ink">What would you like?</p>
-      <div className={gridClass}>
+      <div className={`min-w-0 ${gridClass}`}>
         {entries.map(([id, v]) => {
           const selected = value === id
           return (

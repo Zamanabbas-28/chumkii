@@ -7,7 +7,7 @@ import CheckoutProgress from '../components/CheckoutProgress'
 
 export default function CheckoutPage() {
   return (
-    <div className="min-h-screen bg-ivory text-ink">
+    <div className="min-h-screen overflow-x-hidden bg-ivory text-ink">
       <Navbar solid />
       <main className="mx-auto max-w-6xl px-4 pb-24 pt-28 sm:px-6 lg:px-8">
         <CheckoutProgress current="checkout" />

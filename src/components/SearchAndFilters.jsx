@@ -7,7 +7,7 @@ export default function SearchAndFilters({
   onFiltersChange,
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <label className="relative min-w-0 flex-1 sm:max-w-xs">
         <Search
           size={16}
@@ -22,7 +22,8 @@ export default function SearchAndFilters({
         />
       </label>
 
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+      <div className="min-w-0 overflow-x-auto pb-1 no-scrollbar sm:overflow-visible">
+        <div className="flex w-max min-w-full gap-2 sm:w-auto sm:flex-wrap">
         {[
           ['all', 'All shapes'],
           ['round', 'Round'],
@@ -58,6 +59,7 @@ export default function SearchAndFilters({
           <Sparkles size={13} className={filters.featuredOnly ? 'text-gold' : 'text-muted-gold'} />
           Featured Stacks
         </button>
+        </div>
       </div>
     </div>
   )

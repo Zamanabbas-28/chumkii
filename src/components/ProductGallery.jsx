@@ -62,9 +62,9 @@ export default function ProductGallery({ product }) {
   }`
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       {/* Main Image Container */}
-      <div className="group relative aspect-square w-full overflow-hidden rounded-3xl border border-border-soft/60 bg-cream/40 p-4 sm:p-6 flex items-center justify-center">
+      <div className="group relative flex aspect-square w-full max-w-full items-center justify-center overflow-hidden rounded-3xl border border-border-soft/60 bg-cream/40 p-4 sm:p-6">
         {images.length > 0 ? (
           <motion.div
             key={index}
@@ -76,12 +76,12 @@ export default function ProductGallery({ product }) {
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
             onDragEnd={handleDragEnd}
-            className="relative flex h-full w-full items-center justify-center cursor-grab active:cursor-grabbing"
+            className="relative flex h-full w-full min-w-0 items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing"
           >
             <img
               src={images[index]}
               alt={altText}
-              className="max-h-full max-w-full select-none object-contain drop-shadow-xs"
+              className="h-auto max-h-full w-auto max-w-full select-none object-contain drop-shadow-xs"
               draggable={false}
             />
           </motion.div>
@@ -143,7 +143,8 @@ export default function ProductGallery({ product }) {
 
       {/* Thumbnail Selector Strip */}
       {images.length > 1 && (
-        <div className="-mx-4 flex items-center gap-2.5 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:gap-3 sm:px-0">
+        <div className="min-w-0 overflow-x-auto pb-1 no-scrollbar">
+          <div className="flex w-max min-w-full items-center gap-2.5 sm:gap-3">
           {images.map((src, i) => (
             <button
               key={src + i}
@@ -164,6 +165,7 @@ export default function ProductGallery({ product }) {
               />
             </button>
           ))}
+          </div>
         </div>
       )}
 

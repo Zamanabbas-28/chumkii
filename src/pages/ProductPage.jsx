@@ -20,11 +20,11 @@ import DmCustomizationCta from '../components/DmCustomizationCta'
 
 function ProductPageSkeleton() {
   return (
-    <div className="min-h-screen bg-ivory">
+    <div className="min-h-screen overflow-x-hidden bg-ivory">
       <Navbar solid />
       <main className="mx-auto max-w-6xl px-4 pb-28 pt-28 sm:px-6 lg:px-8">
         <div className="h-4 w-16 animate-pulse rounded bg-cream" />
-        <div className="mt-6 grid gap-10 lg:grid-cols-2">
+        <div className="mt-6 grid min-w-0 gap-10 lg:grid-cols-2">
           <div className="aspect-square animate-pulse rounded-2xl bg-cream" />
           <div className="space-y-4">
             <div className="h-10 w-2/3 animate-pulse rounded bg-cream" />
@@ -114,7 +114,7 @@ export default function ProductPage() {
 
   if (notFound || !product) {
     return (
-      <div className="min-h-screen bg-ivory">
+      <div className="min-h-screen overflow-x-hidden bg-ivory">
         <Navbar solid />
         <main className="mx-auto max-w-3xl px-4 py-32 text-center">
           <h1 className="font-display text-3xl">Design not found</h1>
@@ -205,19 +205,21 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ivory text-ink">
+    <div className="min-h-screen overflow-x-hidden bg-ivory text-ink">
       <Navbar solid />
       <main className="mx-auto max-w-6xl px-4 pb-32 pt-24 sm:px-6 sm:pb-28 sm:pt-28 lg:px-8">
         <Link to="/#designs" className="text-sm text-ink-soft hover:text-ink">
           ← Shop collection
         </Link>
 
-        <div className="mt-6 grid gap-10 lg:grid-cols-2">
+        <div className="mt-6 grid min-w-0 gap-10 lg:grid-cols-2">
           {/* Product Gallery */}
-          <ProductGallery product={product} />
+          <div className="min-w-0">
+            <ProductGallery product={product} />
+          </div>
 
           {/* Product Details & Purchase Form */}
-          <div>
+          <div className="min-w-0">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h1 className="font-display text-3xl text-ink sm:text-4xl md:text-5xl">
