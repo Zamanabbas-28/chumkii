@@ -94,6 +94,10 @@ Thank You confirmation uses `sessionStorage` (`chumki-last-order`) plus an optio
 
 ## Future admin verification (manual for now)
 
+> Prefer the **Admin Dashboard** at `/admin` after applying
+> `migrations/20260904190000_admin_dashboard.sql` and following
+> [`ADMIN_SETUP.md`](./ADMIN_SETUP.md).
+
 In SQL Editor / future dashboard, for a payment awaiting review:
 
 ```sql
