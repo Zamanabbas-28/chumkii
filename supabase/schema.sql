@@ -356,6 +356,15 @@ insert into public.products (
   array['black','silver','white','gold'], true, true, true
 ),
 (
+  'ohona-2-0', 'OHONA 2.0',
+  'Black and silver mirror-work stack with sequin florals and ghungroo side bangles.',
+  'An updated OHONA look — thick black and silver statement bangle with shisha mirrors and sequin flower motifs, paired with slim black companion bangles finished with silver chumki and soft ghungroo bells.',
+  'Wide central bangle in alternating black and silver silk with circular mirrors ringed in sequins and four-petal sequin florals. Two thin black side bangles with vertical silver sequin rows and dangling ghungroo accents. Handmade in Sylhet.',
+  'modern-minimal', '/images/products/ohona-2-0-1.jpg', 'round',
+  '[{"name":"Black","hex":"#1a1a1a"},{"name":"Silver","hex":"#c0c0c0"}]'::jsonb,
+  array['black','silver','white','gold'], true, true, true
+),
+(
   'charkona-kakan', 'Charkona Kakan',
   'Square silk-wrapped bangles with silver chumki and soothing jhunjhuri.',
   'Beautifully sequenced with silver chumki and jhunjhuri, finished with smooth silk thread. Choose your own colour and stack.',
@@ -459,6 +468,7 @@ cross join lateral (
     ('full_stack', 'Full Stack', 'Get the complete matching bangle set.',
       case p.slug
         when 'ohona' then 1200
+        when 'ohona-2-0' then 350
         when 'charkona-kakan' then 1100
         when 'neela' then 1500
         when 'dahlia' then 1400
@@ -474,6 +484,7 @@ cross join lateral (
       case p.slug
         when 'siya' then 100
         when 'zaria' then 100
+        when 'ohona-2-0' then 150
         else round(
           case p.slug
             when 'ohona' then 1200
@@ -492,6 +503,7 @@ cross join lateral (
       case p.slug
         when 'siya' then 75
         when 'zaria' then 50
+        when 'ohona-2-0' then 100
         else round(
           case p.slug
             when 'ohona' then 1200

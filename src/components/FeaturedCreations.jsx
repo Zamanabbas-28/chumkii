@@ -88,9 +88,9 @@ export default function FeaturedCreations({ categoryFilter, onClearFilter }) {
           </div>
         )}
 
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 xl:grid-cols-7">
           {loading
-            ? Array.from({ length: 6 }).map((_, i) => (
+            ? Array.from({ length: 7 }).map((_, i) => (
                 <ProductSkeleton key={i} />
               ))
             : list.map((product) => (

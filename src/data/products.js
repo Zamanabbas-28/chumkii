@@ -93,6 +93,34 @@ export const products = [
     featured: true,
   },
   {
+    id: 'ohona-2-0',
+    name: 'OHONA 2.0',
+    price: 350,
+    variants: variantsWithPrices(350, 150, 100),
+    image: '/images/products/ohona-2-0-1.jpg',
+    images: [
+      '/images/products/ohona-2-0-1.jpg',
+      '/images/products/ohona-2-0-2.jpg',
+    ],
+    shortDescription:
+      'Black and silver mirror-work stack with sequin florals and ghungroo side bangles.',
+    description:
+      'An updated OHONA look — thick black and silver statement bangle with shisha mirrors and sequin flower motifs, paired with slim black companion bangles finished with silver chumki and soft ghungroo bells.',
+    designDetails:
+      'Wide central bangle in alternating black and silver silk with circular mirrors ringed in sequins and four-petal sequin florals. Two thin black side bangles with vertical silver sequin rows and dangling ghungroo accents. Handmade in Sylhet.',
+    sizes: SIZES,
+    colorPalette: [
+      { name: 'Black', hex: '#1a1a1a' },
+      { name: 'Silver', hex: '#c0c0c0' },
+    ],
+    customizable: true,
+    category: 'modern-minimal',
+    availableColors: ['black', 'silver', 'white', 'gold'],
+    shape: 'round',
+    inStock: true,
+    featured: true,
+  },
+  {
     id: 'charkona-kakan',
     name: 'Charkona Kakan',
     price: 100,
