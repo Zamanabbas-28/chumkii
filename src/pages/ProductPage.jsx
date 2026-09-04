@@ -102,8 +102,10 @@ export default function ProductPage() {
   const isMedium = variantId === 'medium'
   const isSmall = variantId === 'small'
   const isPiece = variantId === 'piece'
-  const threeColorSections = Boolean(
-    product?.threeColorSections || product?.variants?.medium,
+  const threeColorSections = Boolean(product?.threeColorSections)
+  const mediumSmallSections = Boolean(
+    product?.mediumSmallSections ||
+      (product?.variants?.medium && !product?.variants?.big && !product?.threeColorSections),
   )
 
   const canAdd = Boolean(product && variantId && size)
@@ -159,7 +161,9 @@ export default function ProductPage() {
         ? bigColorPref === 'original' &&
           mediumColorPref === 'original' &&
           smallColorPref === 'original'
-        : bigColorPref === 'original' && smallColorPref === 'original'
+        : mediumSmallSections
+          ? mediumColorPref === 'original' && smallColorPref === 'original'
+          : bigColorPref === 'original' && smallColorPref === 'original'
       : isBig
       ? bigColorPref === 'original'
       : isMedium
@@ -298,8 +302,36 @@ export default function ProductPage() {
                   </div>
                 )}
 
+                {/* Full Stack: Medium + Small only (e.g. Pori) */}
+                {isStack && mediumSmallSections && !threeColorSections && (
+                  <div className="space-y-5">
+                    <ColorPreferenceSelector
+                      label="Medium Bangle Color"
+                      description="Choose silk thread color preference for the magenta medium bangles."
+                      colorOptions={availableColorList}
+                      originalPalette={product.colorPalette?.slice(0, 1)}
+                      value={mediumColorPref}
+                      onChange={setMediumColorPref}
+                      productName={product.name}
+                      targetPart="Medium Bangles"
+                    />
+
+                    <ColorPreferenceSelector
+                      label="Small Bangle Color"
+                      description="Choose silk thread color preference for the silver companion bangles."
+                      colorOptions={availableColorList}
+                      originalPalette={product.colorPalette?.slice(1, 2)}
+                      value={smallColorPref}
+                      onChange={setSmallColorPref}
+                      productName={product.name}
+                      targetPart="Small Bangles"
+                      showDmPrompt={true}
+                    />
+                  </div>
+                )}
+
                 {/* Full Stack: standard Big + Small preferences */}
-                {isStack && !threeColorSections && (
+                {isStack && !threeColorSections && !mediumSmallSections && (
                   <div className="space-y-5">
                     <ColorPreferenceSelector
                       label="Big Bangle Color"
@@ -332,7 +364,11 @@ export default function ProductPage() {
                     label="Medium Bangle Color Preference"
                     description="Choose silk thread color preference for your medium bangles."
                     colorOptions={availableColorList}
-                    originalPalette={product.colorPalette?.slice(1, 2)}
+                    originalPalette={
+                      product.mediumSmallSections
+                        ? product.colorPalette?.slice(0, 1)
+                        : product.colorPalette?.slice(1, 2)
+                    }
                     value={mediumColorPref}
                     onChange={setMediumColorPref}
                     productName={product.name}

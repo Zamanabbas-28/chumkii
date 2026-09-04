@@ -410,6 +410,15 @@ insert into public.products (
   array['fuchsia','pink','lime','maroon','red','gold','cream'], true, true, true
 ),
 (
+  'pori', 'PORI',
+  'Magenta and silver mirror stack with sequins and jori shuta — a triple-tone everyday contrast.',
+  'Smooth finishing of thread work along with mirror accents, a touch of sequins, and silver jori shuta. A triple colour combination you can match in contrast with your fit of the day.',
+  'Magenta silk medium bands with silver wire spiral and chumki, paired with silver jori-shuta companions set with diamond mirrors and sequins. Handmade in Sylhet.',
+  'colorful-threads', '/images/products/pori-1.jpg', 'round',
+  '[{"name":"Magenta","hex":"#c2185b"},{"name":"Silver","hex":"#c0c0c0"}]'::jsonb,
+  array['fuchsia','pink','silver','white','gold','black'], true, true, true
+),
+(
   'emerald-bloom', 'Emerald Bloom',
   'Deep green thread paired with delicate stones and metallic details.',
   'A rich emerald-inspired combination with soft metallic accents.',
@@ -474,6 +483,7 @@ cross join lateral (
         when 'dahlia' then 1400
         when 'siya' then 250
         when 'zaria' then 600
+        when 'pori' then 400
         when 'emerald-bloom' then 1300
         when 'lavender-spark' then 1250
         when 'blush-gold' then 1350
@@ -504,6 +514,7 @@ cross join lateral (
         when 'siya' then 75
         when 'zaria' then 50
         when 'ohona-2-0' then 100
+        when 'pori' then 50
         else round(
           case p.slug
             when 'ohona' then 1200
@@ -519,6 +530,7 @@ cross join lateral (
         )
       end::numeric)
 ) as v(variant_type, name, description, price)
+where not (p.slug = 'pori' and v.variant_type = 'big')
 on conflict (product_id, variant_type) do update set
   name = excluded.name,
   description = excluded.description,
@@ -527,11 +539,13 @@ on conflict (product_id, variant_type) do update set
   is_available = excluded.is_available,
   updated_at = now();
 
--- Medium bangle variant (Zaria only)
+-- Medium bangle variants (Zaria, Pori)
 insert into public.product_variants (product_id, variant_type, name, description, price, available_sizes, is_available)
-select p.id, 'medium', 'Medium Bangle', 'Purchase only the medium-width bangle.', 75, array['2.2','2.4','2.6','2.8'], true
+select p.id, 'medium', 'Medium Bangle', 'Purchase only the medium-width bangle.',
+  case p.slug when 'pori' then 100 else 75 end,
+  array['2.2','2.4','2.6','2.8'], true
 from public.products p
-where p.slug = 'zaria'
+where p.slug in ('zaria', 'pori')
 on conflict (product_id, variant_type) do update set
   name = excluded.name,
   description = excluded.description,

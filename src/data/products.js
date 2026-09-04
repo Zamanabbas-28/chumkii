@@ -47,6 +47,27 @@ function variantsWithBigMediumSmall(stackPrice, bigPrice, mediumPrice, smallPric
   }
 }
 
+/** Full Stack + Medium / Small only (e.g. Pori — no Big). */
+function variantsWithMediumSmall(stackPrice, mediumPrice, smallPrice) {
+  return {
+    stack: {
+      label: 'Full Stack',
+      price: stackPrice,
+      description: 'Get the complete matching bangle set.',
+    },
+    medium: {
+      label: 'Medium Bangle',
+      price: mediumPrice,
+      description: 'Purchase only the medium-width bangles.',
+    },
+    small: {
+      label: 'Small Bangle',
+      price: smallPrice,
+      description: 'Purchase only the smaller companion bangles.',
+    },
+  }
+}
+
 /** Single per-piece product (no Full Stack / Big / Small choice).
  * Uses frontend key `piece` (maps to DB `small`). */
 function variantsPerPiece(piecePrice) {
@@ -273,6 +294,36 @@ export const products = [
     customizable: true,
     category: 'stone-mirror',
     availableColors: ['fuchsia', 'pink', 'lime', 'maroon', 'red', 'gold', 'cream'],
+    shape: 'round',
+    inStock: true,
+    featured: true,
+  },
+  {
+    id: 'pori',
+    name: 'PORI',
+    price: 400,
+    variants: variantsWithMediumSmall(400, 100, 50),
+    mediumSmallSections: true,
+    image: '/images/products/pori-1.jpg',
+    images: [
+      '/images/products/pori-1.jpg',
+      '/images/products/pori-2.jpg',
+      '/images/products/pori-3.jpg',
+    ],
+    shortDescription:
+      'Magenta and silver mirror stack with sequins and jori shuta — a triple-tone everyday contrast.',
+    description:
+      'Smooth finishing of thread work along with mirror accents, a touch of sequins, and silver jori shuta. A triple colour combination you can match in contrast with your fit of the day.',
+    designDetails:
+      'Magenta silk medium bands with silver wire spiral and chumki, paired with silver jori-shuta companions set with diamond mirrors and sequins. Handmade in Sylhet.',
+    sizes: SIZES,
+    colorPalette: [
+      { name: 'Magenta', hex: '#c2185b' },
+      { name: 'Silver', hex: '#c0c0c0' },
+    ],
+    customizable: true,
+    category: 'colorful-threads',
+    availableColors: ['fuchsia', 'pink', 'silver', 'white', 'gold', 'black'],
     shape: 'round',
     inStock: true,
     featured: true,
